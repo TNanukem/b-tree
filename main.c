@@ -1,3 +1,10 @@
+/* Algoritmos e Estruturas de Dados 2
+ 	 Trabalho 2 - B-Tree
+	 Guilherme Blatt
+	 Lucas Akira
+	 Thiago Músico
+	 Tiago Toledo */
+
 #include "arquivo.h"
 
 int main (void){
