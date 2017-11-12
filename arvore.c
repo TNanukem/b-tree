@@ -5,6 +5,7 @@ void criarArvore(Arvore *A){
 }
 
 
+// Função void com return?
 void procurarChave(int numChaves, int *chaves, int id){
 	int menor, medio, maior;
 	menor = -1;

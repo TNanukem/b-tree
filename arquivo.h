@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef _ARQUIVO
 #define _ARQUIVO
@@ -17,7 +18,7 @@ typedef struct{
 } Registro;
 
 void criarIndice();
-void inserirMusica(int id, char titulo[30], char genero[20], Registro r);
+void inserirMusica(int id, char titulo[30], char genero[20], Registro r, int *tamTitulo, int *tamGenero);
 int pesquisaMusicaID();
 void removeMusicaID();
 void mostraArvoreB();
@@ -35,4 +36,29 @@ int caractereValido(char *string);
    tamanho do registro para que isso também seja colocado no arquivo*/
 int regVariavel(Registro r, char *buffer);
 
+/* Função que separa os campos que foram salvos no arquivo. Eles foram
+   salvos como char e separados por '|', essa função permite que peguemos
+   individualmente cada campo salvo */
+char *separaCampos(char *buffer, int *p);
+
 #endif
+
+
+/* Como realizar a leitura do arquivo de dados? O trecho de código a seguir
+   demonstra como você pode ler UM registro do arquivo de dados. No caso, do
+   primeiro registro.
+
+    printf("\n\n IMPRESSAO DO ARQUIVO \n\n");
+
+	fread(&auxsize, sizeof(int), 1, dados);
+	fread(&buffer, sizeof(buffer), 1, dados);
+
+	pos = 0;
+
+	sscanf(separaCampos(buffer, &pos), "%d", &auxID);
+	strcpy(auxTitulo, separaCampos(buffer, &pos));
+	strcpy(auxGenero, separaCampos(buffer, &pos));
+
+	printf("%d%d|%s|%s", auxsize, auxID, auxTitulo, auxGenero);
+
+*/

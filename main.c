@@ -2,8 +2,10 @@
 
 int main (void){
 
-	int auxID; char auxTitulo[30], auxGenero[20];
+	int auxID; char auxTitulo[30], auxGenero[20], auxSize;
 	int inputMenu, outLoop = 0;
+	int tamTitulo, tamGenero;
+	char buffer[200];
 
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
@@ -24,10 +26,12 @@ int main (void){
 			case 2:
 				printf("\n Insira o ID da musica: ");
 				fscanf(stdin, "%d", &auxID);
+				getchar();
 
 				printf("\n Insira o Titulo da Musica: ");
 				fgets(auxTitulo, 30, stdin);
-				
+				auxTitulo[strlen(auxTitulo) - 1] = '\0';	// Impede a leitura do \n no input
+
 				//if(!caractereValido(auxTitulo)){
 				//	printf("Titulo Invalido! Caraceteres especiais nao sao aceitos");
 				//	break;
@@ -35,13 +39,14 @@ int main (void){
 
 				printf("\n Insira o Genero da Musica: ");
 				fgets(auxGenero, 20, stdin);
+				auxTitulo[strlen(auxTitulo) - 1] = '\0';	// Impede a leitura do \n no input
 				
 				//if(!caractereValido(auxGenero)){
 				//	printf("Genero Invalido! Caraceteres especiais nao sao aceitos");
 				//	break;
 				//}
 
-				InserirMusica(auxID, auxTitulo, auxGenero, reg, dados);
+				InserirMusica(auxID, auxTitulo, auxGenero, dados, &tamTitulo, &tamGenero);
 				break;
 
 			case 3:
@@ -65,6 +70,7 @@ int main (void){
 				break;
 		}
 	}
+
 	fclose(dados);
 	return 0;
 }
