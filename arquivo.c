@@ -2,7 +2,11 @@
 
 
 // Tem que verificar se o arquivo de índice já existe Miss
-void criarIndice(Arvore* A){
+void criarIndice(Arvore* A, FILE *log){
+	
+	// Escrita no arquivo de log
+	fprintf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n.");
+
 	A->raiz = NULL;
 }
 
@@ -24,7 +28,7 @@ char *separaCampos(char *buffer, int *p) {
     return &buffer[pos];
 }
 
-vvoid InserirMusica(int id, char titulo[30], char genero[20], FILE *dados, int *tamTitulo, int *tamGenero){
+void InserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero){
 
 	// Parte do código responsável por inserir a música no arquivo de dados
 	Registro *r = malloc(sizeof(Registro)); // Aloca um novo registro
@@ -33,6 +37,10 @@ vvoid InserirMusica(int id, char titulo[30], char genero[20], FILE *dados, int *
 	r->id = id;
 	strcpy(r->titulo, titulo);
 	strcpy(r->genero, genero);
+
+	// Criação do log para inserção da música
+	fprintf(log, "Execucao de operacao de INSERCAO de <%d>, <%s>, <%s>.\n", id, titulo, genero);
+	// O resto precisa da B-TREE.
 
 	// Variáveis para identificar o real tamanho das strings
 	*tamTitulo = strlen(r->titulo);
@@ -59,16 +67,27 @@ vvoid InserirMusica(int id, char titulo[30], char genero[20], FILE *dados, int *
 
 }
 
-int pesquisaMusicaID(int id){
+int pesquisaMusicaID(int id, FILE *log){
+
+	// Escrita no arquivo de Log
+	fprintf(log, "Execucao de operacao de PESQUISA de <%d>.\n", id);
+	// O resto precisa da B-TREE
+}
+
+void removeMusicaID(int id, FILE *log){
+
+	// Escrita no arquivo de log
+	fprintf(log, "Execucao de operacao de REMOCAO de <%d>.\n", id);
+	// Precisa da B-TREE pro resto
 
 }
 
-void removeMusicaID(){
-
-}
-
-void mostraArvoreB(){
+void mostraArvoreB(FILE *log){
 	
+	// Escrita no arquivo de log
+	fprintf(log, "Execucao de operacao para mostrar a arvore-B gerada:\n");
+	// Precisa da B-TREE pro resto
+
 }
 
 int caractereValido(char *string){

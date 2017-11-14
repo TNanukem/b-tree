@@ -9,7 +9,8 @@ int main (void){
 
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
-	FILE *dados = fopen("dados.dad", "a+b");
+	FILE *dados = fopen("dados.dat", "a+b");
+	FILE *log = fopen("log_TToledo.txt", "a");
 
 	while(!outLoop){
 
@@ -46,7 +47,7 @@ int main (void){
 				//	break;
 				//}
 
-				InserirMusica(auxID, auxTitulo, auxGenero, dados, &tamTitulo, &tamGenero);
+				InserirMusica(auxID, auxTitulo, auxGenero, dados, log, &tamTitulo, &tamGenero);
 				break;
 
 			case 3:
