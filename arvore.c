@@ -6,7 +6,7 @@ void criarArvore(Arvore *A){
 
 
 // Função void com return?
-void procurarChave(int numChaves, int *chaves, int id){
+int procurarChave(int numChaves, int *chaves, int id){
 	int menor, medio, maior;
 	menor = -1;
 	maior = numChaves;
@@ -23,7 +23,7 @@ void procurarChave(int numChaves, int *chaves, int id){
 	return maior;
 }
 
-void pesquisarArvore(Pagina *P, int id){
+int pesquisarArvore(Pagina *P, int id){
 	if(P->numChaves == 0)
 		return 0;
 	int pos = procurarChave(P->numChaves, P->chaves, id);
@@ -31,6 +31,6 @@ void pesquisarArvore(Pagina *P, int id){
 	if(pos < P->numChaves && P->chaves[pos] == key)
 		return pos;
 	else
-		return (!P->folha && P->filhos[pos], id);
+		pesquisarArvore(!P->folha && P->filhos[pos], id);
 }
 
