@@ -1,7 +1,7 @@
 #ifndef _ARVORE
 #define _ARVORE
 
-#include "arquivo.h"
+#define ORDEM 5
 
 typedef struct{
 
