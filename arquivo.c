@@ -28,7 +28,7 @@ char *separaCampos(char *buffer, int *p) {
     return &buffer[pos];
 }
 
-void InserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero){
+void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero){
 
 	// Parte do código responsável por inserir a música no arquivo de dados
 	Registro *r = malloc(sizeof(Registro)); // Aloca um novo registro

@@ -21,7 +21,7 @@ int main (void){
 		// Switch responsável por controlar as opções do menu
 		switch(inputMenu){
 			case 1:
-				CriarIndice();
+				criarIndice();
 				break;
 
 			case 2:
@@ -47,19 +47,19 @@ int main (void){
 				//	break;
 				//}
 
-				InserirMusica(auxID, auxTitulo, auxGenero, dados, log, &tamTitulo, &tamGenero);
+				inserirMusica(auxID, auxTitulo, auxGenero, dados, log, &tamTitulo, &tamGenero);
 				break;
 
 			case 3:
-				PesquisaMusicaID();
+				pesquisaMusicaID();
 				break;
 
 			case 4:
-				RemoveMusicaID();
+				removeMusicaID();
 				break;
 
 			case 5:
-				MostraArvoreB();
+				mostraArvoreB();
 				break;
 
 			case 6:
