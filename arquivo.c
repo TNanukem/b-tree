@@ -13,9 +13,32 @@ void criarIndice(Arvore* A, FILE *log){
 int regVariavel(Registro r, char *buffer){
 
 	// Imprime no buffer os dados do registro, formatados da maneira necessária
-	sprintf(buffer, "%d|%s|%s|", r.id, r.titulo, r.genero);
-	return strlen(buffer);
-}
+	char char_id[5];
+	// Imprime no buffer os dados do registro, formatados da maneira necessária
+	if(r.id <= 0xff){
+		char_r.id[0] = r.id & 0xff;
+		char_r.id[1] = '\0'; 
+	}
+	else if(r.id <= 0xffff){
+		char_r.id[0] = r.id & 0xff;
+		char_r.id[1] = (r.id >> 8) & 0xff;
+		char_r.id[2] = '\0';
+	}
+	else if(r.id <=0xffffff){
+		char_r.id[0] = r.id & 0xff;
+		char_r.id[1] = (r.id >> 8) & 0xff;
+		char_r.id[2] = (r.id >> 16) & 0xff;
+		char_r.id[3] = '\0';
+	}
+	else {
+		char_r.id[0] = r.id & 0xff;
+		char_r.id[1] = (r.id >> 8) & 0xff;
+		char_r.id[2] = (r.id >> 16) & 0xff;
+		char_r.id[3] = (r.id >> 24) & 0xff;
+		char_r.id[4] = '\0';
+	}
+	sprintf(buffer, "%s|%s|%s|", char_id, r.titulo, r.genero);
+	return strlen(buffer);}
 
 char *separaCampos(char *buffer, int *p) {
     int pos = *p;
