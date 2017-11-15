@@ -5,7 +5,7 @@
 void criarIndice(Arvore* A, FILE *log){
 	
 	// Escrita no arquivo de log
-	fprintf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n.");
+	printf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n.");
 
 	A->raiz = NULL;
 }
@@ -54,14 +54,6 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	fwrite(&buffer, sizeof(buffer), 1, dados);	// Escreve o buffer (os dados formatados do registro)
 
 	// Parte do código responsável por atualizar o índice
-	if(A->raiz == NULL){
-		Pagina p = (Pagina*) malloc(sizeof(Pagina));
-		A->raiz = p;
-		p->folha = 0;
-		p->numChaves = 1;
-		p->chaves[0] = id;
-		p->byteoffset[0] = 0;	
-	}
 
 	free(r);
 
@@ -90,7 +82,7 @@ void mostraArvoreB(FILE *log){
 
 }
 
-int caractereValido(char *string){
+/*int caractereValido(char *string){
 	int i, comp;
 	comp = strlen((string));
 	for(i = 0; i < comp; i++){
@@ -100,4 +92,4 @@ int caractereValido(char *string){
 	}
 	return 1;
 
-}
+} */
