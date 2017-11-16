@@ -13,9 +13,9 @@ typedef struct{
 
 } Registro;
 
-void criarIndice(Arvore* A, FILE *log);
+void criarIndice(Arvore *A, FILE *log, FILE *indice);
 void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero);
-int pesquisaMusicaID(int id, FILE *log);
+int pesquisaMusicaID(int id, FILE *log, Arvore *A);
 void removeMusicaID(int id, FILE *log);
 void mostraArvoreB(FILE *log);
 

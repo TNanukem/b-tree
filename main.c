@@ -10,14 +10,22 @@ int main (void){
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
 	FILE *dados = fopen("dados.dat", "a+b");
+	FILE *indice = fopen("arvore.idx", "a+b");
 	FILE *log = fopen("log_TToledo.txt", "a");
+
+	// Verifica se algum deles nao foi aberto
+	if (!dados || !indice || !log) {
+		printf("Memoria Heap insuficente!\n");
+		return -1;
+	}
+
 
 	while(!outLoop){
 
 		printf("\nInsira a funcionalidade desejada: ");
 		fscanf(stdin, "%d", &inputMenu);
 
-		
+
 		// Switch responsável por controlar as opções do menu
 		switch(inputMenu){
 			case 1:
@@ -41,7 +49,7 @@ int main (void){
 				printf("\n Insira o Genero da Musica: ");
 				fgets(auxGenero, 20, stdin);
 				auxTitulo[strlen(auxTitulo) - 1] = '\0';	// Impede a leitura do \n no input
-				
+
 				//if(!caractereValido(auxGenero)){
 				//	printf("Genero Invalido! Caraceteres especiais nao sao aceitos");
 				//	break;
@@ -72,6 +80,20 @@ int main (void){
 		}
 	}
 
-	fclose(dados);
+	// Finaliza os ponteiros para FILE, sempre verificando se realmente nao sao nulos
+	if (dados) {
+		fclose(dados);
+		dados = NULL;
+	}
+
+	if (indice) {
+		fclose(indice);
+		indice = NULL;
+	}
+
+	if (log) {
+		fclose(log);
+		log = NULL;
+	}
 	return 0;
 }

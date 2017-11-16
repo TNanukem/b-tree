@@ -41,9 +41,9 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	// Se a pagina nao for folha, entao deve-se procurar a esquerda ou a direita do indice
 	else if (!P->folha){
 		if (id < P->chaves[*pos]) // Se id for menor, ir para a pagina da esquerda
-			pesquisarArvore(P->filhos[*pos], id, pos, encontrado);
+			return pesquisarArvore(P->filhos[*pos], id, pos, encontrado);
 		else // Caso contrario, ir para a pagina da direita
-			pesquisarArvore(P->filhos[(*pos)+1], id, pos, encontrado);
+			return pesquisarArvore(P->filhos[(*pos)+1], id, pos, encontrado);
 	}
 	else {	// Se for folha
 		*encontrado = 0;	// A pagina retornada aqui seria a pagina que o indice ficaria
@@ -53,5 +53,6 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 
 int inserirPagina(int id, int tamTitulo, int tamGenero) {
 	// Implementar
+	
 	return 0;
 }
