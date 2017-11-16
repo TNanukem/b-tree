@@ -3,9 +3,9 @@
 
 // Tem que verificar se o arquivo de índice já existe Miss
 void criarIndice(Arvore* A, FILE *log){
-	
+
 	// Escrita no arquivo de log
-	printf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n.");
+	printf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n");
 
 	A->raiz = NULL;
 }
@@ -75,7 +75,7 @@ void removeMusicaID(int id, FILE *log){
 }
 
 void mostraArvoreB(FILE *log){
-	
+
 	// Escrita no arquivo de log
 	fprintf(log, "Execucao de operacao para mostrar a arvore-B gerada:\n");
 	// Precisa da B-TREE pro resto
