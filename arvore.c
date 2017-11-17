@@ -51,8 +51,8 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	}
 }
 
-int inserirPagina(int id, int tamTitulo, int tamGenero) {
+int inserirPagina(int id, char titulo[30], char genero[20], FILE *log, int *tamTitulo, int *tamGenero) {
 	// Implementar
-	
+
 	return 0;
 }

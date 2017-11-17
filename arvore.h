@@ -45,7 +45,8 @@ int procurarChave(int numChaves, int *chaves, int id);
 */
 Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado);
 
-int adicionarArvore(Arvore *A, int id);
-int inserirPagina(int id, int tamTitulo, int tamGenero);
+//int adicionarArvore(Arvore *A, int id);
+int inserirPagina(int id, char titulo[30], char genero[20], FILE *log, int *tamTitulo, int *tamGenero);
+
 
 #endif

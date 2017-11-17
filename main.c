@@ -10,11 +10,11 @@ int main (void){
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
 	FILE *dados = fopen("dados.dat", "a+b");
-	FILE *indice = fopen("arvore.idx", "a+b");
+	FILE *indice = NULL;
 	FILE *log = fopen("log_TToledo.txt", "a");
 
 	// Verifica se algum deles nao foi aberto
-	if (!dados || !indice || !log) {
+	if (!dados || !log) {
 		printf("Memoria Heap insuficente!\n");
 		return -1;
 	}

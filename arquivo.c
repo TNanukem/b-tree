@@ -2,10 +2,33 @@
 
 
 // Tem que verificar se o arquivo de índice já existe Miss
-void criarIndice(Arvore* A, FILE *log, FILE *indice){
-	
+void criarIndice(Arvore* A, FILE *dados, FILE *log, FILE *indice){
+
+	int tamTitulo = 0, tamGenero = 0;
+	Registro *registro = NULL;
+	//Pagina *pagina = calloc(1, sizeof(Pagina));
+
 	// Escrita no arquivo de log
 	printf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n");
+
+	// Abre o ponteiro do arquivo de indice
+	indice = fopen("arvore.idx", "a+b");
+	// Confere se foi aberto com sucesso
+	if (!indice) {
+		printf("Erro na leitura/escrita de arvore.idx");
+		return;
+	}
+
+	// Deixa o ponteiro de dados no inicio do arquivo
+	fseek(dados, 0, SEEK_SET);
+
+	// Enquanto existirem dados para serem obtidos
+	//fread retorna a quantidade de elementos de tamanho sizeof(Registro) se conseguir obter dados.
+	//Em especifico, essa quantidade eh 1 (Segundo parametro). Caso chegue no End of File (EOF),
+	//essa igualdade nao se verifica.
+	while(fread(registro, 1, sizeof(Registro), dados) == 1) {
+		// TODO
+	}
 
 	A->raiz = NULL;
 }
