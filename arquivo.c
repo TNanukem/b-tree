@@ -6,7 +6,7 @@ void criarIndice(Arvore* A, FILE *dados, FILE *log, FILE *indice){
 
 	int tamTitulo = 0, tamGenero = 0;
 	Registro *registro = NULL;
-	//Pagina *pagina = calloc(1, sizeof(Pagina));
+	// Pagina *pagina = calloc(1, sizeof(Pagina));
 
 	// Escrita no arquivo de log
 	printf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n");
@@ -15,7 +15,7 @@ void criarIndice(Arvore* A, FILE *dados, FILE *log, FILE *indice){
 	indice = fopen("arvore.idx", "a+b");
 	// Confere se foi aberto com sucesso
 	if (!indice) {
-		printf("Erro na leitura/escrita de arvore.idx");
+		printf("Erro na leitura/escrita de arvore.idx\n");
 		return;
 	}
 
@@ -23,9 +23,9 @@ void criarIndice(Arvore* A, FILE *dados, FILE *log, FILE *indice){
 	fseek(dados, 0, SEEK_SET);
 
 	// Enquanto existirem dados para serem obtidos
-	//fread retorna a quantidade de elementos de tamanho sizeof(Registro) se conseguir obter dados.
-	//Em especifico, essa quantidade eh 1 (Segundo parametro). Caso chegue no End of File (EOF),
-	//essa igualdade nao se verifica.
+	// fread retorna a quantidade de elementos de tamanho sizeof(Registro) se conseguir obter dados.
+	// Em especifico, essa quantidade eh 1 (Segundo parametro). Caso chegue no End of File (EOF),
+	// essa igualdade nao se verifica.
 	while(fread(registro, 1, sizeof(Registro), dados) == 1) {
 		// TODO
 	}
@@ -84,9 +84,9 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	strcpy(r->titulo, titulo);
 	strcpy(r->genero, genero);
 
-	// Criação do log para inserção da música
+	// Insere os dados no arquivo de log
 	fprintf(log, "Execucao de operacao de INSERCAO de <%d>, <%s>, <%s>.\n", id, titulo, genero);
-	// O resto precisa da B-TREE.
+	// Precisa fazer a escrita no arquivo de log para as coisas da B-Tree também.
 
 	// Variáveis para identificar o real tamanho das strings
 	*tamTitulo = strlen(r->titulo);
@@ -112,6 +112,17 @@ int pesquisaMusicaID(int id, FILE *log, Arvore *A){
 
 	int encontrado = 0, pos = -1;
 	pesquisarArvore(A->raiz, id, &pos, &encontrado);
+
+	if(encontrado == 0){
+		fprintf(log, "Chave <%d> nao encontrada\n", id);
+	}
+	else if(encontrado == 1){
+		// Pega o offset de algum modo
+		// fprintf(log, "Chave <%d> encontrada, offset <%d>\n", id, offset);
+		// Pesquisa no arquivo de dados com o offset
+		// fprintf(log, "Titulo: <%s>, Genero: <%s>\n", titulo, genero);
+	}
+
 	return encontrado;
 }
 
@@ -131,14 +142,26 @@ void mostraArvoreB(FILE *log){
 
 }
 
-/*int caractereValido(char *string){
-	int i, comp;
+int caractereValido(char *string){
+	int i, comp, aux;
 	comp = strlen((string));
+
+	// Verifica se cada caractere inserido está de acordo com as especificações:
+	// 65 - 90 => Letras Maiúsculas
+	// 97 - 122 => Letras Minúsculas
+	// 32 => Espaço
+	// 48 - 57 => Números
+
 	for(i = 0; i < comp; i++){
-		if(*string[i] < 65 || (*string[i] > 90 && *string[i] < 97) || *string[i] > 122){
-			return 0;
+
+		if((string[i] >= 65 && string[i] <= 90) || (string[i] >= 97 && string[i] <= 122) || (string[i] == 32) 
+			|| (string[i] >= 48 && string[i] <= 57))
+				aux = 1;
+		else{
+			aux = 0;
+			break;
 		}
 	}
-	return 1;
+	return aux;	
 
-} */
+}

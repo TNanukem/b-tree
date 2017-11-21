@@ -41,19 +41,31 @@ int main (void){
 				fgets(auxTitulo, 30, stdin);
 				auxTitulo[strlen(auxTitulo) - 1] = '\0';	// Impede a leitura do \n no input
 
-				//if(!caractereValido(auxTitulo)){
-				//	printf("Titulo Invalido! Caraceteres especiais nao sao aceitos");
-				//	break;
-				//}
+				// Verificando a validade dos caracteres do título
+				if(!caractereValido(auxTitulo)){
+					printf("Titulo Invalido! Caraceteres especiais nao sao aceitos\n");
+					
+					// Dá um reset nos inputs em caso de entrada inválida
+					auxID = -1;
+					strcpy(auxTitulo, "\0");
+					
+					break;
+				}
 
 				printf("\n Insira o Genero da Musica: ");
 				fgets(auxGenero, 20, stdin);
-				auxTitulo[strlen(auxTitulo) - 1] = '\0';	// Impede a leitura do \n no input
+				auxGenero[strlen(auxGenero) - 1] = '\0';	// Impede a leitura do \n no input
 
-				//if(!caractereValido(auxGenero)){
-				//	printf("Genero Invalido! Caraceteres especiais nao sao aceitos");
-				//	break;
-				//}
+				// Verificando a validade dos caraceteres do gênero
+				if(!caractereValido(auxGenero)){
+					printf("Genero Invalido! Caraceteres especiais nao sao aceitos\n");
+					
+					// Dá um reset nos inputs em caso de entrada inválida
+					auxID = -1;
+					strcpy(auxTitulo, "\0"); strcpy(auxGenero, "\0");
+					
+					break;
+				}
 
 				inserirMusica(auxID, auxTitulo, auxGenero, dados, log, &tamTitulo, &tamGenero);
 				break;

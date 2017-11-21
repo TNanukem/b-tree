@@ -24,6 +24,11 @@ typedef struct{
 } Arvore;
 
 void criarArvore(Arvore *A);
+
+/* Pesquisa, por meio de busca binária, a posição de uma chave dentro
+	de uma página da B-Tree.
+*/
+
 int procurarChave(int numChaves, int *chaves, int id);
 
 /* Funcao que pesquisa recursivamente a arvore-B procurando um registro
