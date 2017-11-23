@@ -37,7 +37,7 @@ int regVariavel(Registro r, char *buffer){
 
 	// Imprime no buffer os dados do registro, formatados da maneira necessária
 	char char_id[5];
-	// Imprime no buffer os dados do registro, formatados da maneira necessária
+
 	if(r.id <= 0xff){
 		char_id[0] = r.id & 0xff;
 		char_id[1] = '\0';
@@ -75,7 +75,7 @@ char *separaCampos(char *buffer, int *p) {
 }
 
 void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero){
-
+	int i;
 	// Parte do código responsável por inserir a música no arquivo de dados
 	Registro *r = malloc(sizeof(Registro)); // Aloca um novo registro
 
@@ -96,8 +96,8 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	char buffer[200];
 	int size = regVariavel(*r, buffer);
 
-	fwrite(&size, sizeof(int), 1, dados);	// Escreve o tamanho do registro no começo dele
-	fwrite(&buffer, sizeof(buffer), 1, dados);	// Escreve o buffer (os dados formatados do registro)
+	fwrite(&size, sizeof(size), 1, dados);	// Escreve o tamanho do registro no começo dele
+	fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
 
 	// Parte do código responsável por atualizar o índice
 
@@ -164,4 +164,55 @@ int caractereValido(char *string){
 	}
 	return aux;	
 
+}
+
+int idConvert(char *idString){
+	int id = 0;
+	int temp = 0;
+	int i = 0;
+	char char_id[5];
+	char t;
+
+
+	while(idString[i] != '\0'){
+		temp = idString[i];
+
+		if(temp<0)
+			temp += 256;
+
+		id += exp5(256, i) * temp;
+		i++;
+	}
+
+	/*
+	if(strlen(idString) <= 1){
+		id = idString[0];
+		printf("ID 1 = %d\n", id);
+	}
+	else if(strlen(idString) <= 2){
+
+		id = ((256 + idString[0]) + (idString[1]));
+		printf("ID 2 = %d\n", id);
+	}
+	else if(strlen(idString) <= 3){
+		id = ((idString[0] <<16) | (idString [1] << 8)| idString[2]);
+		printf("ID 3 = %d\n", id);
+	}
+	else {
+		id = ((idString[0] << 24) | (idString [1] << 16) | (idString[2] << 8) | idString[3]);
+		printf("ID 4 = %d\n", id);
+	} 
+*/
+	return id;
+}
+
+int exp5(int e, int a){
+		int i, temp = e;
+		if(a == 0)
+			e = 1;
+		for(i = 1; i< a; i++){
+			e *= temp;
+		}
+
+		return e;
 }

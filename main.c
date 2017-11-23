@@ -1,5 +1,7 @@
 #include "arquivo.h"
 
+int i;
+
 int main (void){
 
 	int auxID; char auxTitulo[30], auxGenero[20], auxSize;
@@ -84,6 +86,33 @@ int main (void){
 
 			case 6:
 				outLoop = 1;
+				int pos, auxsize;
+				char IDzin[5]; auxID = -1;
+
+				// Testando a leitura do arquivo
+
+
+
+				fseek(dados, 0, SEEK_SET);
+
+				
+				while(fread(&auxsize, sizeof(auxsize), 1, dados)){
+
+					fread(buffer, auxsize, 1, dados);
+
+					pos = 0;
+
+					sscanf(separaCampos(buffer, &pos), "%s", IDzin);
+
+					auxID = idConvert(IDzin);
+
+					strcpy(auxTitulo, separaCampos(buffer, &pos));
+					strcpy(auxGenero, separaCampos(buffer, &pos));
+
+					printf("%d||%d|%s|%s\n", auxsize, auxID, auxTitulo, auxGenero);
+				}
+					
+
 				break;
 
 			default:
