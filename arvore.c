@@ -51,8 +51,7 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	}
 }
 
-Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *byteMedio)
-{
+Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *byteMedio) {
     int pos;
     int mid;
     int byte;
@@ -126,8 +125,7 @@ Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *by
     }
 }
 
-void inserirPagina(Pagina* P, int id, int byteOffset)
-{
+void inserirPagina(Pagina* P, int id, int byteOffset) {
     Pagina* P1;   /* new left child */
     Pagina* P2;   /* new right child */
     int chaveMedia;
