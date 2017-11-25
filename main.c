@@ -111,8 +111,9 @@ int main (void){
 
 					printf("%d||%d|%s|%s\n", auxsize, auxID, auxTitulo, auxGenero);
 				}
-					
-
+				
+				printf("PESQUISA: \n");
+				pesquisaDados(67, auxTitulo, auxGenero, dados);
 				break;
 
 			default:

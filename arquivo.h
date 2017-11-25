@@ -13,10 +13,28 @@ typedef struct{
 
 } Registro;
 
+/* Função que realiza a criação do arquivo de índice, baseado no arquivo de
+   dados já existente.
+*/
+
 void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE *indice);
+
+/* Função que insere um registro no arquivo de dados */
+
 void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero);
-int pesquisaMusicaID(int id, FILE *log, Arvore *A);
+
+/* Função que pesquisa na árvore B o offset do registro cujo id foi passado
+   como parâmetro
+*/
+
+int pesquisaMusicaID(int id, FILE *log, Arvore *A, FILE *dados);
+
+/* Função que realiza a remoção de um registro baseado no id fornecido */
+
 void removeMusicaID(int id, FILE *log);
+
+/* Função que imprime na tela da Árvore B */
+
 void mostraArvoreB(FILE *log);
 
 /* Função utilizada para verificar se o input digitado é válido
@@ -40,27 +58,22 @@ int regVariavel(Registro r, char *buffer);
 */
 
 char *separaCampos(char *buffer, int *p);
+
+/* Função que, dado um offset recebido do arquivo de índice, realiza a pesquisa
+   do registro associado ao offset no arquivo de dados.
+  */
+
+void pesquisaDados(int offset, char *titulo, char *genero, FILE *Dados);
+
+/* Função utilizada para converter o ID, que é salvo como uma string, para 
+   um inteiro.
+  */
+
 int idConvert(char *idString);
+
+/* Função auxiliar cujo único propósito é realizar a operação de potência
+   sem a necessidade de usar a math.h
+*/
 int exp5(int e, int a);
 
 #endif
-
-
-/* Como realizar a leitura do arquivo de dados? O trecho de código a seguir
-   demonstra como você pode ler UM registro do arquivo de dados. No caso, do
-   primeiro registro.
-
-    printf("\n\n IMPRESSAO DO ARQUIVO \n\n");
-
-	fread(&auxsize, sizeof(int), 1, dados);
-	fread(&buffer, sizeof(buffer), 1, dados);
-
-	pos = 0;
-
-	sscanf(separaCampos(buffer, &pos), "%d", &auxID);
-	strcpy(auxTitulo, separaCampos(buffer, &pos));
-	strcpy(auxGenero, separaCampos(buffer, &pos));
-
-	printf("%d%d|%s|%s", auxsize, auxID, auxTitulo, auxGenero);
-
-*/

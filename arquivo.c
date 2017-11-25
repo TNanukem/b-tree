@@ -105,7 +105,8 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 
 }
 
-int pesquisaMusicaID(int id, FILE *log, Arvore *A){
+int pesquisaMusicaID(int id, FILE *log, Arvore *A, FILE *dados){
+	char titulo[30]; char genero[20];
 
 	// Escrita no arquivo de Log
 	fprintf(log, "Execucao de operacao de PESQUISA de <%d>.\n", id);
@@ -117,10 +118,13 @@ int pesquisaMusicaID(int id, FILE *log, Arvore *A){
 		fprintf(log, "Chave <%d> nao encontrada\n", id);
 	}
 	else if(encontrado == 1){
-		// Pega o offset de algum modo
-		// fprintf(log, "Chave <%d> encontrada, offset <%d>\n", id, offset);
+		
+		fprintf(log, "Chave <%d> encontrada, offset <%d>,\n", id, pos);
+		
 		// Pesquisa no arquivo de dados com o offset
-		// fprintf(log, "Titulo: <%s>, Genero: <%s>\n", titulo, genero);
+		pesquisaDados(pos, titulo, genero, dados);
+
+		fprintf(log, "Titulo: <%s>, Genero: <%s>\n", titulo, genero);
 	}
 
 	return encontrado;
@@ -215,4 +219,25 @@ int exp5(int e, int a){
 		}
 
 		return e;
+}
+
+void pesquisaDados(int offset, char *titulo, char *genero, FILE *dados){
+	int size, id, pos;
+	char idAUX[5], buffer[200];
+
+	fseek(dados, offset, SEEK_SET);
+	fread(&size, sizeof(size), 1, dados);
+
+	fread(buffer, size, 1, dados);
+	
+	pos = 0;
+	sscanf(separaCampos(buffer, &pos), "%s", idAUX);
+
+	id = idConvert(idAUX);
+
+	strcpy(titulo, separaCampos(buffer, &pos));
+	strcpy(genero, separaCampos(buffer, &pos));
+
+	printf("%d||%d|%s|%s\n", size, id, titulo, genero);
+
 }
