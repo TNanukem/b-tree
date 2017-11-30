@@ -1,7 +1,10 @@
 #include "arvore.h"
 
-void criarArvore(Arvore *A){
-	//A->raiz = NULL;
+void criarArvore(Arvore *A) {
+
+	A->raiz = calloc(1, sizeof(Pagina));
+	A->raiz->numChaves = 0;
+	A->raiz->folha = 1;
 }
 
 // Funcao procura chave dentro de uma pagina, usando busca binaria
@@ -51,7 +54,7 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	}
 }
 
-Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *byteMedio) {
+Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *byteMedio) {
     int pos;
     int mid;
     int byte;
@@ -61,7 +64,7 @@ Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *by
 
     if(pos < P->numChaves && P->chaves[pos] == id) {
         /* nothing to do */
-        return 0;
+        return NULL;
     }
 
     if(P->folha) {
@@ -76,20 +79,19 @@ Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *by
     } else {
 
         /* insert in child */
-        P2 = inserirSplit(P->filhos[pos], id, byteOffset, &mid, &byte);
-        
+        P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte);
+
         /* maybe insert a new key in b */
         if(P2) {
 
             /* every key above pos moves up one space */
             memmove(&P->chaves[pos+1], &P->chaves[pos], sizeof(*(P->chaves)) * (P->numChaves - pos));
             /* new kid goes in pos + 1*/
-            memmove(&P->filhos[pos+2], &P->filhos[pos+1], sizeof(*(P->chaves)) * (P->numChaves - pos));
+            memmove(&P->filhos[pos+2], &P->filhos[pos+1], sizeof(*(P->filhos)) * (P->numChaves - pos));
 
             /* every key above pos moves up one space */
             memmove(&P->byteOffset[pos+1], &P->byteOffset[pos], sizeof(*(P->byteOffset)) * (P->numChaves - pos));
-            /* new kid goes in pos + 1*/
-            memmove(&P->byteOffset[pos+2], &P->byteOffset[pos+1], sizeof(*(P->byteOffset)) * (P->numChaves - pos));
+
             P->chaves[pos] = mid;
             P->byteOffset[pos] = byte;
             P->filhos[pos+1] = P2;
@@ -105,7 +107,7 @@ Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *by
         *chaveMedia = P->chaves[mid];
         *byteMedio = P->byteOffset[mid];
 
-        P2 = malloc(sizeof(*P2));
+        P2 = malloc(sizeof(Pagina));
 
         P2->numChaves = P->numChaves - mid - 1;
         P2->folha = P->folha;
@@ -121,23 +123,25 @@ Pagina* inserirSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *by
         return P2;
     }
     else {
-        return 0;
+        return NULL;
     }
 }
 
-void inserirPagina(Pagina* P, int id, int byteOffset) {
-    Pagina* P1;   /* new left child */
-    Pagina* P2;   /* new right child */
+void inserirId(Pagina* P, int id, int byteOffset) {
+    Pagina *P1;   /* Possivel nova pagina filha a esquerda */
+    Pagina *P2;   /* Possivel nova pagina filha a direita */
     int chaveMedia;
     int byteMedio;
 
-    P2 = inserirSplit(P, id, byteOffset, &chaveMedia, &byteMedio);
+		// Verifica se o split deve ser feito, e o faz em caso afirmativo
+    P2 = verificaSplit(P, id, byteOffset, &chaveMedia, &byteMedio);
 
+		// Se split foi feito, deve-se colocar a outra pagina
     if(P2) {
         /* basic issue here is that we are at the root */
         /* so if we split, we have to make a new root */
 
-        P1 = malloc(sizeof(*P1));
+        P1 = malloc(sizeof(Pagina));
         assert(P1);
 
         /* copy root to b1 */

@@ -12,8 +12,8 @@
 typedef struct pagina{
 
 	int numChaves;			// Número de chaves armazenadas na página
-	int chaves[ORDEM-1];
-	int byteOffset[ORDEM-1];	//
+	int chaves[ORDEM];
+	int byteOffset[ORDEM];	//
 	struct pagina *filhos[ORDEM];
 	int folha;				// Booleano (1/true)(0/false);
 
@@ -53,7 +53,7 @@ int procurarChave(int numChaves, int *chaves, int id);
 Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado);
 
 //int adicionarArvore(Arvore *A, int id);
-void inserirPagina(Pagina* P, int id, int byteOffset);
+void inserirId(Pagina* P, int id, int byteOffset);
 
 
 #endif
