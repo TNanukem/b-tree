@@ -100,21 +100,25 @@ int main (void){
 				while(fread(&auxsize, sizeof(auxsize), 1, dados)){
 
 					fread(buffer, auxsize, 1, dados);
-
 					pos = 0;
 
+					sscanf(separaCampos(buffer, &pos), "%d", &auxID);
+					/*
+					//auxID = (int) *(separaCampos(buffer, &pos));
 					sscanf(separaCampos(buffer, &pos), "%s", IDzin);
-
 					auxID = idConvert(IDzin);
-
+					*/
+					//memmove(&auxID, buffer, sizeof(auxID));
+					//pos = sizeof(auxID);
 					strcpy(auxTitulo, separaCampos(buffer, &pos));
 					strcpy(auxGenero, separaCampos(buffer, &pos));
 
-					printf("%d||%d|%s|%s\n", auxsize, auxID, auxTitulo, auxGenero);
+					printf("%d||%d|%s|%s|\n", auxsize, auxID, auxTitulo, auxGenero);
 				}
-
+				/*
 				printf("PESQUISA: \n");
 				pesquisaDados(67, auxTitulo, auxGenero, dados);
+				*/
 				break;
 
 			case 89:

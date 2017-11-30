@@ -34,7 +34,7 @@ void criarIndice(Arvore* A, FILE *dados, FILE *log, FILE *indice){
 }
 
 int regVariavel(Registro r, char *buffer){
-
+	/*
 	// Imprime no buffer os dados do registro, formatados da maneira necessária
 	char char_id[5];
 
@@ -61,17 +61,19 @@ int regVariavel(Registro r, char *buffer){
 		char_id[4] = '\0';
 	}
 	sprintf(buffer, "%s|%s|%s|", char_id, r.titulo, r.genero);
-	return strlen(buffer);}
+	*/
+	sprintf(buffer, "%d|%s|%s|", r.id, r.titulo, r.genero);
+	return strlen(buffer);
+}
 
 char *separaCampos(char *buffer, int *p) {
     int pos = *p;
-
-    // Troca todos os '|' por '\0' e permite que tenhamos acesso individual a cada campo
-    while(buffer[*p]!='|')
-        (*p)++;
-    buffer[*p] = '\0';
-    (*p)++;
-    return &buffer[pos];
+		// Troca todos os '|' por '\0' e permite que tenhamos acesso individual a cada campo
+		while(buffer[*p]!='|')
+				(*p)++;
+		buffer[*p] = '\0';
+		(*p)++;
+		return &buffer[pos];
 }
 
 void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero){
@@ -118,9 +120,9 @@ int pesquisaMusicaID(int id, FILE *log, Arvore *A, FILE *dados){
 		fprintf(log, "Chave <%d> nao encontrada\n", id);
 	}
 	else if(encontrado == 1){
-		
+
 		fprintf(log, "Chave <%d> encontrada, offset <%d>,\n", id, pos);
-		
+
 		// Pesquisa no arquivo de dados com o offset
 		pesquisaDados(pos, titulo, genero, dados);
 
@@ -158,7 +160,7 @@ int caractereValido(char *string){
 
 	for(i = 0; i < comp; i++){
 
-		if((string[i] >= 65 && string[i] <= 90) || (string[i] >= 97 && string[i] <= 122) || (string[i] == 32) 
+		if((string[i] >= 65 && string[i] <= 90) || (string[i] >= 97 && string[i] <= 122) || (string[i] == 32)
 			|| (string[i] >= 48 && string[i] <= 57))
 				aux = 1;
 		else{
@@ -166,7 +168,7 @@ int caractereValido(char *string){
 			break;
 		}
 	}
-	return aux;	
+	return aux;
 
 }
 
@@ -205,7 +207,7 @@ int idConvert(char *idString){
 	else {
 		id = ((idString[0] << 24) | (idString [1] << 16) | (idString[2] << 8) | idString[3]);
 		printf("ID 4 = %d\n", id);
-	} 
+	}
 */
 	return id;
 }
@@ -229,7 +231,7 @@ void pesquisaDados(int offset, char *titulo, char *genero, FILE *dados){
 	fread(&size, sizeof(size), 1, dados);
 
 	fread(buffer, size, 1, dados);
-	
+
 	pos = 0;
 	sscanf(separaCampos(buffer, &pos), "%s", idAUX);
 
