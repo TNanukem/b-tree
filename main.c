@@ -120,7 +120,7 @@ int main (void){
 			case 89:
 				printf("Teste de insercao de indice na arvore (RAM)\n");
 				criarArvore(A);
-
+				/*
 				inserirId(A->raiz, 3, 7);
 				printf("Pagina de id 3 inserido na arvore!\n");
 				inserirId(A->raiz, 19, 7);
@@ -149,7 +149,6 @@ int main (void){
 				printf("Pagina de id 21 inserido na arvore!\n");
 				inserirId(A->raiz, 11, 7);
 				printf("Pagina de id 11 inserido na arvore!\n");
-
 				inserirId(A->raiz, 5, 7);
 				printf("Pagina de id 5 inserido na arvore!\n");
 				inserirId(A->raiz, 8, 7);
@@ -160,7 +159,6 @@ int main (void){
 				printf("Pagina de id 12 inserido na arvore!\n");
 				inserirId(A->raiz, 10, 7);
 				printf("Pagina de id 10 inserido na arvore!\n");
-				/*
 				inserirId(A->raiz, 25, 7);
 				printf("Pagina de id 25 inserido na arvore!\n");
 				inserirId(A->raiz, 17, 7);
@@ -174,12 +172,12 @@ int main (void){
 				inserirId(A->raiz, 22, 7);
 				printf("Pagina de id 22 inserido na arvore!\n");
 				*/
-				/*
-				for (i = 0; i < 10; i++) {
+
+				for (i = 0; i < 50; i++) {
 					inserirId(A->raiz, 50-i, 7);
 					printf("Pagina de id %d inserido na arvore!\n",50-i);
 				}
-				*/
+
 				break;
 			case 90:
 				outLoop = 1;

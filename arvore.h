@@ -14,7 +14,7 @@ typedef struct pagina{
 	int numChaves;			// Número de chaves armazenadas na página
 	int chaves[ORDEM];
 	int byteOffset[ORDEM];	//
-	struct pagina *filhos[ORDEM];
+	struct pagina *filhos[ORDEM+1];
 	int folha;				// Booleano (1/true)(0/false);
 
 } Pagina;

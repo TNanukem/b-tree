@@ -101,10 +101,13 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 						/* Mesmo deslocamento das chaves para os byteOffset*/
             memmove(&P->byteOffset[pos+1], &P->byteOffset[pos], sizeof(*(P->byteOffset)) * (P->numChaves - pos));
 
-						// Atualiza os valores 
+						// Atualiza os valores
             P->chaves[pos] = mid;
             P->byteOffset[pos] = byte;
-            P->filhos[pos+1] = P2;
+
+						/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
+						   vetor filhos (serve apenas para armazenar o overflow) */
+          	P->filhos[pos+1] = P2;
             P->numChaves++;
         }
     }
@@ -135,7 +138,7 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 				/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
 				   em P2 */
         if(!P->folha) {
-            memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
+          memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
         }
 				// P agora fica com a primeira metade das chaves, e por consequencia o numero de
 				// chaves cai pela metade
@@ -173,7 +176,7 @@ void inserirId(Pagina* P, int id, int byteOffset) {
         P->numChaves = 1;
         P->folha = 0;
         P->chaves[0] = chaveMedia;
-        P->byteOffset[0] = byteOffset;
+        P->byteOffset[0] = byteMedio;
         P->filhos[0] = P1;
         P->filhos[1] = P2;
     }
