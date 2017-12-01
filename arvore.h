@@ -14,18 +14,17 @@ typedef struct pagina{
 	int numChaves;			// Número de chaves armazenadas na página
 	int chaves[ORDEM];
 	int byteOffset[ORDEM];	//
-	struct pagina *filhos[ORDEM+1];
+	int filhos[ORDEM+1]; // Guarda o RRN de cada filho dessa pagina
 	int folha;				// Booleano (1/true)(0/false);
 
 } Pagina;
 
 typedef struct{
-
-	Pagina *raiz;
-
+	int raiz;
+	
 } Arvore;
 
-void criarArvore(Arvore *A, FILE *indice);
+void criarArvore(Arvore *A, FILE *indice, int *RRNtotal);
 
 /* Pesquisa, por meio de busca binária, a posição de uma chave dentro
 	de uma página da B-Tree.
@@ -53,7 +52,7 @@ int procurarChave(int numChaves, int *chaves, int id);
 Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado);
 
 //int adicionarArvore(Arvore *A, int id);
-void inserirId(Pagina* P, int id, int byteOffset, FILE *indice);
+void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal);
 
 
 #endif

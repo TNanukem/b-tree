@@ -3,7 +3,7 @@
 
 
 int main (void){
-	int i, byteOffset = 0;
+	int i, byteOffset = 0, RRNtotal = 0;
 	int auxID; char auxTitulo[30], auxGenero[20], auxSize;
 	int inputMenu, outLoop = 0;
 	int tamTitulo, tamGenero;
@@ -32,7 +32,7 @@ int main (void){
 		// Switch responsável por controlar as opções do menu
 		switch(inputMenu){
 			case 1:
-				criarIndice(A, dados, log, &indice, &byteOffset);
+				criarIndice(A, dados, log, &indice, &byteOffset, &RRNtotal);
 				break;
 
 			case 2:
@@ -119,11 +119,13 @@ int main (void){
 				*/
 				break;
 			case 88:
+				/*
 				printf("Noia\n");
 				criarArvore(A, NULL);
 				for(i = 0; i < 100; i++)
 					inserirId(A->raiz, 100-i, 2*i, NULL);
 				break;
+				*/
 			case 89:
 				printf("Teste de insercao de indice na arvore (RAM)\n");
 				//criarArvore(A);

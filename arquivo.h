@@ -17,7 +17,7 @@ typedef struct{
    dados já existente.
 */
 
-void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset);
+void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset, int *RRN);
 
 /* Função que insere um registro no arquivo de dados */
 

@@ -1,13 +1,18 @@
 #include "arvore.h"
 
-void criarArvore(Arvore *A, FILE *indice) {
-
-	A->raiz = calloc(1, sizeof(Pagina));
-	A->raiz->numChaves = 0;
-	A->raiz->folha = 1;
-	fwrite(A->raiz, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
-	free(A->raiz);
-	A->raiz = NULL;
+void criarArvore(Arvore *A, FILE *indice, int *RRNtotal) {
+	Pagina *P = calloc(1, sizeof(Pagina));
+	if (!P) {
+		printf("Memoria Heap insuficiente!\n");
+		return;
+	}
+	P->numChaves = 0;
+	P->folha = 1;
+	fwrite(P, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
+	A->raiz = *RRNtotal;
+	(*RRNtotal)++;
+	free(P);
+	P = NULL;
 }
 
 // Funcao procura chave dentro de uma pagina, usando busca binaria
@@ -29,6 +34,7 @@ int procurarChave(int numChaves, int *chaves, int id){
 }
 
 Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
+	/*
 	// Se a pagina passada for nula, nao ha nada a ser feito
 	if(P == NULL) {
 		*encontrado = 0;
@@ -55,13 +61,21 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 		*encontrado = 0;	// A pagina retornada aqui seria a pagina que o indice ficaria
 		return P;					// se estivesse na arvore junto com a posicao *pos correspondente
 	}
+	*/
 }
 
-Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice) {
-    int pos;
-    int mid;
-    int byte;
-    Pagina* P2;
+int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal) {
+    int pos,mid, byte, RRN_P2;
+		Pagina *P, *P2;
+
+		// Carrega Pagina de RRN igual a P
+		fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+		P = calloc(1, sizeof(Pagina));
+		if (!P) {
+			printf("Memoria Heap insuficente!\n");
+			return -1;
+		}
+		fread(P, sizeof(Pagina), 1, indice);
 
 		/* Retorna a posicao de id, se encontrado na pagina, ou a posicao que id
 		   deveria ficar caso nao encontrado */
@@ -69,7 +83,7 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 
     if(pos < P->numChaves && P->chaves[pos] == id) {
         /* Se achou a chave na arvore B, nao precisa inserir */
-        return NULL;
+        return -1;
     }
 
 		// Se a pagina for folha, deve-se tentar inserir id nela
@@ -87,10 +101,10 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 					 ate chegar em uma pagina folha. Note que mid e byte nesse caso guardam
 					 os valores do id "promovido" (que vai para a pagina pai) e seu byteoffset,
 					 respectivamente */
-        P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice);
+        RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal);
 
         /* Se o split foi feito: */
-        if(P2) {
+        if(RRN_P2 != -1) {
 
 			/* Desloca as chaves para dar lugar a nova chave (id)*/
             memmove(&P->chaves[pos+1], &P->chaves[pos], sizeof(*(P->chaves)) * (P->numChaves - pos));
@@ -108,7 +122,7 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 
 			/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
 			   vetor filhos (serve apenas para armazenar o overflow) */
-          	P->filhos[pos+1] = P2;
+          	P->filhos[pos+1] = RRN_P2;
             P->numChaves++;
         }
     }
@@ -123,8 +137,11 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 
 		// Aloca nova pagina para receber (a segunda) metade das chaves
 		// P2 esta na mesma profundidade que o P chamado
-        P2 = malloc(sizeof(Pagina));
-
+				P2 = calloc(1, sizeof(Pagina));
+				if (!P2) {
+					printf("Memoria Heap insuficente!\n");
+					return -1;
+				}
 		// A nova pagina vai receber a metade dos dados menos 1 chave (a que vai ser promovida)
         P2->numChaves = P->numChaves - mid - 1;
 		// Se P for folha, entao P2 tambem sera (mesma profundidade)
@@ -143,42 +160,84 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 		// P agora fica com a primeira metade das chaves, e por consequencia o numero de
 		// chaves cai pela metade
         P->numChaves = mid;
-				// Salva P2 no arquivo de indice
+
+				// Atualiza P no arquivo de indice
+				fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+				fwrite(P, sizeof(Pagina), 1, indice);
+				free(P);
+				P = NULL;
+
+				// Salva P2 no final do arquivo de indice
+				fseek(indice, 0, SEEK_END);
 				fwrite(P2, sizeof(Pagina), 1, indice);
-        return P2;
+				(*RRNtotal)++;
+				free(P2);
+				P2 = NULL;
+        return (*RRNtotal);
     }
     else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
-        return NULL;
+			// Atualiza P no arquivo de indice
+			fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+			fwrite(P, sizeof(Pagina), 1, indice);
+			free(P);
+			P = NULL;
+      return -1;
     }
 }
 
-void inserirId(Pagina* P, int id, int byteOffset, FILE *indice) {
-    Pagina *P1;   /* Possivel nova pagina filha a esquerda */
-    Pagina *P2;   /* Possivel nova pagina filha a direita */
-    int chaveMedia;
-    int byteMedio;
+void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal) {
+    Pagina *P1;
+    Pagina *P;
+    int chaveMedia, byteMedio;
+		/* Possivel nova pagina filha a esquerda tem RRN igual ao total (ultima pagina a ser inserida)*/
+		int RRN_P2; /* Possivel nova pagina filha a direita */
 
 	// Verifica se o split deve ser feito, e o faz em caso afirmativo
-    P2 = verificaSplit(P, id, byteOffset, &chaveMedia, &byteMedio, indice);
+    RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal);
 
 	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
 	   deve-se criar uma nova raiz */
-    if(P2) {
+    if(RRN_P2 != -1) {
 
     	//Aloca memória para novo filho
-        P1 = malloc(sizeof(Pagina));
-        assert(P1);
+      P1 = malloc(sizeof(Pagina));
+			if (!P1) {
+				printf("Memoria Heap insuficente!\n");
+				return;
+			}
 
-        //Copia para P1 o filho ja dividido
-        memmove(P1, P, sizeof(*P));
+			// Carrega Pagina de RRN igual a P
+			fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+			P = calloc(1, sizeof(Pagina));
+			if (!P) {
+				printf("Memoria Heap insuficente!\n");
+				return;
+			}
+			fread(P, sizeof(Pagina), 1, indice);
 
-        //Faz nova raiz que aponta para P1 e P2
-        P->numChaves = 1;
-        P->folha = 0;
-        P->chaves[0] = chaveMedia;
-        P->byteOffset[0] = byteMedio;
-        P->filhos[0] = P1;
-        P->filhos[1] = P2;
+      //Copia para P1 o filho ja dividido
+      memmove(P1, P, sizeof(*P));
+
+      //Faz nova raiz que aponta para P1 e P2
+      P->numChaves = 1;
+      P->folha = 0;
+      P->chaves[0] = chaveMedia;
+      P->byteOffset[0] = byteMedio;
+      P->filhos[0] = *RRNtotal;
+      P->filhos[1] = RRN_P2;
+
+			// Atualiza P no arquivo de indice
+			fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+			fwrite(P, sizeof(Pagina), 1, indice);
+			free(P);
+			P = NULL;
+
+			// Salva P1 no final do arquivo de indice
+			fseek(indice, 0, SEEK_END);
+			fwrite(P1, sizeof(Pagina), 1, indice);
+			(*RRNtotal)++;
+			free(P1);
+			P1 = NULL;
 
     }
 }

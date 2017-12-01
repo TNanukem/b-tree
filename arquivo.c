@@ -2,7 +2,7 @@
 
 
 // Tem que verificar se o arquivo de índice já existe Miss
-void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset){
+void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset, int *RRNtotal){
 
 	int tamTitulo = 0, tamGenero = 0;
 	Registro *registro = NULL;
@@ -27,15 +27,17 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 		int pos, bufferSize, id = -1;
 		char buffer[200];
 		*byteOffset = 0;
-
+		*RRNtotal = 0;
+		Pagina *raiz;
 		// Cria e guarda arvore em disco
-		criarArvore(A, *indice);
+		criarArvore(A, *indice,RRNtotal);
 
 		fseek(dados, 0, SEEK_SET);
-		fseek(*indice, 0, SEEK_SET);
-		A->raiz = calloc(1, sizeof(Pagina));
+
+		raiz = calloc(1, sizeof(Pagina));
 		// Acessa a A->raiz a partir do disco (arquivo indice)
-		fread(A->raiz, sizeof(Pagina), 1, *indice);
+		fseek(*indice, A->raiz*sizeof(Pagina), SEEK_SET);
+		fread(raiz, sizeof(Pagina), 1, *indice);
 		// Leitura de dados.dat
 		while(fread(&bufferSize, sizeof(bufferSize), 1, dados)) {
 
@@ -43,7 +45,7 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			pos = 0;
 			sscanf(separaCampos(buffer, &pos), "%d", &id);
 
-			inserirId(A->raiz, id, *byteOffset, *indice);
+			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
 			///////
@@ -152,7 +154,7 @@ int pesquisaMusicaID(int id, FILE *log, Arvore *A, FILE *dados){
 	fprintf(log, "Execucao de operacao de PESQUISA de <%d>.\n", id);
 
 	int encontrado = 0, pos = -1;
-	pesquisarArvore(A->raiz, id, &pos, &encontrado);
+	//pesquisarArvore(A->raiz, id, &pos, &encontrado);
 
 	if(encontrado == 0){
 		fprintf(log, "Chave <%d> nao encontrada\n", id);
