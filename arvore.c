@@ -5,9 +5,9 @@ void criarArvore(Arvore *A, FILE *indice) {
 	A->raiz = calloc(1, sizeof(Pagina));
 	A->raiz->numChaves = 0;
 	A->raiz->folha = 1;
-	fwrite(A->raiz, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
-	free(A->raiz);
-	A->raiz = NULL;
+	//fwrite(A->raiz, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
+	//free(A->raiz);
+	//A->raiz = NULL;
 }
 
 // Funcao procura chave dentro de uma pagina, usando busca binaria
@@ -74,7 +74,7 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 
 		// Se a pagina for folha, deve-se tentar inserir id nela
     if(P->folha) {
-				/* Todas as chaves maiores que id devem ser deslocados em 1 espaco para a direita*/
+		/* Todas as chaves maiores que id devem ser deslocados em 1 espaco para a direita*/
         memmove(&P->chaves[pos+1], &P->chaves[pos], sizeof(*(P->chaves)) * (P->numChaves - pos));
         memmove(&P->byteOffset[pos+1], &P->byteOffset[pos], sizeof(*(P->byteOffset)) * (P->numChaves - pos));
         P->chaves[pos] = id;
@@ -92,64 +92,61 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
         /* Se o split foi feito: */
         if(P2) {
 
-            /* every key above pos moves up one space */
-						/* Desloca as chaves para dar lugar a nova chave (id)*/
+			/* Desloca as chaves para dar lugar a nova chave (id)*/
             memmove(&P->chaves[pos+1], &P->chaves[pos], sizeof(*(P->chaves)) * (P->numChaves - pos));
-            /* new kid goes in pos + 1*/
-						/* Inclusive o vetor que guarda os filhos tambem deve ser deslocado em um espaco
-						   para a direita, para dar lugar ao filho de id */
+
+			/* Inclusive o vetor que guarda os filhos tambem deve ser deslocado em um espaco
+			   para a direita, para dar lugar ao filho de id */
             memmove(&P->filhos[pos+2], &P->filhos[pos+1], sizeof(*(P->filhos)) * (P->numChaves - pos));
 
-            /* every key above pos moves up one space */
-						/* Mesmo deslocamento das chaves para os byteOffset*/
+			/* Mesmo deslocamento das chaves para os byteOffset*/
             memmove(&P->byteOffset[pos+1], &P->byteOffset[pos], sizeof(*(P->byteOffset)) * (P->numChaves - pos));
 
-						// Atualiza os valores
+			// Atualiza os valores
             P->chaves[pos] = mid;
             P->byteOffset[pos] = byte;
 
-						/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
-						   vetor filhos (serve apenas para armazenar o overflow) */
+			/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
+			   vetor filhos (serve apenas para armazenar o overflow) */
           	P->filhos[pos+1] = P2;
             P->numChaves++;
         }
     }
 
-    /* we waste a tiny bit of space by splitting now
-     * instead of on next insert */
-		/* Verifica se ocorreu overflow na pagina apos a insercao de id */
+	
+	/* Verifica se ira ocorrer um overflow na pagina apos a insercao de um proximo id */
     if(P->numChaves >= ORDEM) {
         mid = P->numChaves/2;
 
         *chaveMedia = P->chaves[mid];
         *byteMedio = P->byteOffset[mid];
 
-				// Aloca nova pagina para receber (a segunda) metade das chaves
-				// P2 esta na mesma profundidade que o P chamado
+		// Aloca nova pagina para receber (a segunda) metade das chaves
+		// P2 esta na mesma profundidade que o P chamado
         P2 = malloc(sizeof(Pagina));
 
-				// A nova pagina vai receber a metade dos dados menos 1 chave (a que vai ser promovida)
+		// A nova pagina vai receber a metade dos dados menos 1 chave (a que vai ser promovida)
         P2->numChaves = P->numChaves - mid - 1;
-				// Se P for folha, entao P2 tambem sera (mesma profundidade)
+		// Se P for folha, entao P2 tambem sera (mesma profundidade)
         P2->folha = P->folha;
 
-				// Copia a segunda metade de P para P2; P fica com a primeira metade das chaves
+		// Copia a segunda metade de P para P2; P fica com a primeira metade das chaves
         memmove(P2->chaves, &P->chaves[mid+1], sizeof(*(P->chaves)) * P2->numChaves);
-				// Analogo com os byteOffset de cada chave
+		// Analogo com os byteOffset de cada chave
         memmove(P2->byteOffset, &P->byteOffset[mid+1], sizeof(*(P->byteOffset)) * P2->numChaves);
 
-				/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
-				   em P2 */
+		/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
+		   em P2 */
         if(!P->folha) {
           memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
         }
-				// P agora fica com a primeira metade das chaves, e por consequencia o numero de
-				// chaves cai pela metade
+		// P agora fica com a primeira metade das chaves, e por consequencia o numero de
+		// chaves cai pela metade
         P->numChaves = mid;
 
         return P2;
     }
-    else { // Se nao teve overflow, retornar nulo (nao sera necessario criar nova pagina)
+    else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
         return NULL;
     }
 }
@@ -160,29 +157,27 @@ void inserirId(Pagina* P, int id, int byteOffset, FILE *indice) {
     int chaveMedia;
     int byteMedio;
 
-		// Verifica se o split deve ser feito, e o faz em caso afirmativo
+	// Verifica se o split deve ser feito, e o faz em caso afirmativo
     P2 = verificaSplit(P, id, byteOffset, &chaveMedia, &byteMedio);
 
-		/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
-		   deve-se criar uma nova raiz */
+	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
+	   deve-se criar uma nova raiz */
     if(P2) {
-        /* basic issue here is that we are at the root */
-        /* so if we split, we have to make a new root */
 
+    	//Alloca memória para novo filho
         P1 = malloc(sizeof(Pagina));
         assert(P1);
 
-        /* copy root to b1 */
+        //Copia para P1 o filho ja dividido
         memmove(P1, P, sizeof(*P));
 
-        /* make root point to b1 and b2 */
+        //Faz nova raiz que aponta para P1 e P2
         P->numChaves = 1;
         P->folha = 0;
         P->chaves[0] = chaveMedia;
         P->byteOffset[0] = byteMedio;
         P->filhos[0] = P1;
         P->filhos[1] = P2;
-
-				
+			
     }
 }

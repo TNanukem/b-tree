@@ -8,7 +8,8 @@ int main (void){
 	int inputMenu, outLoop = 0;
 	int tamTitulo, tamGenero;
 	char buffer[200];
-	Arvore A;
+	Arvore* A;
+	A = (Arvore*) malloc(sizeof(Arvore));
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
 	FILE *dados = fopen("dados.dat", "a+b");
@@ -117,7 +118,12 @@ int main (void){
 				pesquisaDados(67, auxTitulo, auxGenero, dados);
 				*/
 				break;
-
+			case 88:
+				printf("Noia\n");
+				criarArvore(A, NULL);
+				for(i = 0; i < 100; i++)
+					inserirId(A->raiz, 100-i, 2*i, NULL);
+				break;
 			case 89:
 				printf("Teste de insercao de indice na arvore (RAM)\n");
 				//criarArvore(A);
