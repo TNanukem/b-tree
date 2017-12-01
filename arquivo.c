@@ -2,22 +2,59 @@
 
 
 // Tem que verificar se o arquivo de índice já existe Miss
-void criarIndice(Arvore* A, FILE *dados, FILE *log, FILE *indice){
+void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset){
 
 	int tamTitulo = 0, tamGenero = 0;
 	Registro *registro = NULL;
 	// Pagina *pagina = calloc(1, sizeof(Pagina));
 
-	// Escrita no arquivo de log
-	printf("Execucao da criacao do arquivo de indice <indice.idx> com base no arquivo dados <dados.dat>.\n");
 
-	// Abre o ponteiro do arquivo de indice
-	indice = fopen("arvore.idx", "a+b");
-	// Confere se foi aberto com sucesso
-	if (!indice) {
-		printf("Erro na leitura/escrita de arvore.idx\n");
-		return;
+	// Verifica se existe arquivo de indice
+	*indice = fopen("arvore.idx", "r");
+
+
+	if (!*indice) { // Criar um novo arvore.idx caso nao exista
+		printf("arvore.idx nao encontrado. Criando...\n");
+		*indice = fopen("arvore.idx", "w+");
+		if (!(*indice)) {
+			printf("Erro na criacao de arvore.idx! Cancelando...\n");
+			return;
+		}
+		// Escrita no arquivo de log
+		fprintf(log, "Execucao da criacao do arquivo de indice <arvore.idx> com base no arquivo dados <dados.dat>.\n");
+		printf("Execucao da criacao do arquivo de indice <arvore.idx> com base no arquivo dados <dados.dat>.\n");
+
+		int pos, bufferSize, id = -1;
+		char buffer[200];
+		*byteOffset = 0;
+
+		// Cria e guarda arvore em disco
+		criarArvore(A, *indice);
+
+		fseek(dados, 0, SEEK_SET);
+		fseek(*indice, 0, SEEK_SET);
+		A->raiz = calloc(1, sizeof(Pagina));
+		// Acessa a A->raiz a partir do disco (arquivo indice)
+		fread(A->raiz, sizeof(Pagina), 1, *indice);
+		// Leitura de dados.dat
+		while(fread(&bufferSize, sizeof(bufferSize), 1, dados)) {
+
+			fread(buffer, bufferSize, 1, dados);
+			pos = 0;
+			sscanf(separaCampos(buffer, &pos), "%d", &id);
+
+			inserirId(A->raiz, id, *byteOffset, *indice);
+			*byteOffset += bufferSize + sizeof(bufferSize);
+			printf("Registro de id %d inserido na arvore!\n",id);
+			///////
+		}
+
 	}
+	else { // Se arvore.idx ja existe, verificar se esta atualizado
+
+
+	}
+
 
 	// Deixa o ponteiro de dados no inicio do arquivo
 	fseek(dados, 0, SEEK_SET);
@@ -26,11 +63,12 @@ void criarIndice(Arvore* A, FILE *dados, FILE *log, FILE *indice){
 	// fread retorna a quantidade de elementos de tamanho sizeof(Registro) se conseguir obter dados.
 	// Em especifico, essa quantidade eh 1 (Segundo parametro). Caso chegue no End of File (EOF),
 	// essa igualdade nao se verifica.
+	/*
 	while(fread(registro, 1, sizeof(Registro), dados) == 1) {
 		// TODO
 	}
-
-	A->raiz = NULL;
+	*/
+	//A->raiz = NULL;
 }
 
 int regVariavel(Registro r, char *buffer){

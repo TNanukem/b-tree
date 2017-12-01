@@ -3,13 +3,12 @@
 
 
 int main (void){
-	int i;
+	int i, byteOffset = 0;
 	int auxID; char auxTitulo[30], auxGenero[20], auxSize;
 	int inputMenu, outLoop = 0;
 	int tamTitulo, tamGenero;
 	char buffer[200];
-	Arvore *A = calloc(1, sizeof(Arvore));
-	assert(A);
+	Arvore A;
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
 	FILE *dados = fopen("dados.dat", "a+b");
@@ -32,7 +31,7 @@ int main (void){
 		// Switch responsável por controlar as opções do menu
 		switch(inputMenu){
 			case 1:
-				//criarIndice();
+				criarIndice(&A, dados, log, &indice, &byteOffset);
 				break;
 
 			case 2:
@@ -95,8 +94,6 @@ int main (void){
 
 
 				fseek(dados, 0, SEEK_SET);
-
-
 				while(fread(&auxsize, sizeof(auxsize), 1, dados)){
 
 					fread(buffer, auxsize, 1, dados);
@@ -123,7 +120,7 @@ int main (void){
 
 			case 89:
 				printf("Teste de insercao de indice na arvore (RAM)\n");
-				criarArvore(A);
+				//criarArvore(A);
 				/*
 				inserirId(A->raiz, 3, 7);
 				printf("Pagina de id 3 inserido na arvore!\n");
@@ -176,12 +173,12 @@ int main (void){
 				inserirId(A->raiz, 22, 7);
 				printf("Pagina de id 22 inserido na arvore!\n");
 				*/
-
+				/*
 				for (i = 0; i < 50; i++) {
 					inserirId(A->raiz, 50-i, 7);
 					printf("Pagina de id %d inserido na arvore!\n",50-i);
 				}
-
+				*/
 				break;
 			case 90:
 				outLoop = 1;
@@ -207,9 +204,10 @@ int main (void){
 		fclose(log);
 		log = NULL;
 	}
-	if (A) {
-		free(A);
-		A = NULL;
+	if (indice) {
+		fclose(indice);
+		indice = NULL;
 	}
+
 	return 0;
 }

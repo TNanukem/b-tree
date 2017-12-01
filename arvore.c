@@ -1,10 +1,13 @@
 #include "arvore.h"
 
-void criarArvore(Arvore *A) {
+void criarArvore(Arvore *A, FILE *indice) {
 
 	A->raiz = calloc(1, sizeof(Pagina));
 	A->raiz->numChaves = 0;
 	A->raiz->folha = 1;
+	fwrite(A->raiz, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
+	free(A->raiz);
+	A->raiz = NULL;
 }
 
 // Funcao procura chave dentro de uma pagina, usando busca binaria
@@ -151,7 +154,7 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
     }
 }
 
-void inserirId(Pagina* P, int id, int byteOffset) {
+void inserirId(Pagina* P, int id, int byteOffset, FILE *indice) {
     Pagina *P1;   /* Possivel nova pagina filha a esquerda */
     Pagina *P2;   /* Possivel nova pagina filha a direita */
     int chaveMedia;
@@ -179,5 +182,7 @@ void inserirId(Pagina* P, int id, int byteOffset) {
         P->byteOffset[0] = byteMedio;
         P->filhos[0] = P1;
         P->filhos[1] = P2;
+
+				
     }
 }

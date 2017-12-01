@@ -17,7 +17,7 @@ typedef struct{
    dados já existente.
 */
 
-void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE *indice);
+void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset);
 
 /* Função que insere um registro no arquivo de dados */
 
@@ -54,7 +54,7 @@ int regVariavel(Registro r, char *buffer);
 
 /* Função que separa os campos que foram salvos no arquivo. Eles foram
    salvos como char e separados por '|', essa função permite que peguemos
-   individualmente cada campo salvo 
+   individualmente cada campo salvo
 */
 
 char *separaCampos(char *buffer, int *p);
@@ -65,7 +65,7 @@ char *separaCampos(char *buffer, int *p);
 
 void pesquisaDados(int offset, char *titulo, char *genero, FILE *Dados);
 
-/* Função utilizada para converter o ID, que é salvo como uma string, para 
+/* Função utilizada para converter o ID, que é salvo como uma string, para
    um inteiro.
   */
 

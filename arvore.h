@@ -25,7 +25,7 @@ typedef struct{
 
 } Arvore;
 
-void criarArvore(Arvore *A);
+void criarArvore(Arvore *A, FILE *indice);
 
 /* Pesquisa, por meio de busca binária, a posição de uma chave dentro
 	de uma página da B-Tree.
@@ -53,7 +53,7 @@ int procurarChave(int numChaves, int *chaves, int id);
 Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado);
 
 //int adicionarArvore(Arvore *A, int id);
-void inserirId(Pagina* P, int id, int byteOffset);
+void inserirId(Pagina* P, int id, int byteOffset, FILE *indice);
 
 
 #endif
