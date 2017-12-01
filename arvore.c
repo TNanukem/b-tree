@@ -5,9 +5,9 @@ void criarArvore(Arvore *A, FILE *indice) {
 	A->raiz = calloc(1, sizeof(Pagina));
 	A->raiz->numChaves = 0;
 	A->raiz->folha = 1;
-	//fwrite(A->raiz, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
-	//free(A->raiz);
-	//A->raiz = NULL;
+	fwrite(A->raiz, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
+	free(A->raiz);
+	A->raiz = NULL;
 }
 
 // Funcao procura chave dentro de uma pagina, usando busca binaria
@@ -57,7 +57,7 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	}
 }
 
-Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *byteMedio) {
+Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice) {
     int pos;
     int mid;
     int byte;
@@ -87,7 +87,7 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 					 ate chegar em uma pagina folha. Note que mid e byte nesse caso guardam
 					 os valores do id "promovido" (que vai para a pagina pai) e seu byteoffset,
 					 respectivamente */
-        P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte);
+        P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice);
 
         /* Se o split foi feito: */
         if(P2) {
@@ -113,7 +113,7 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
         }
     }
 
-	
+
 	/* Verifica se ira ocorrer um overflow na pagina apos a insercao de um proximo id */
     if(P->numChaves >= ORDEM) {
         mid = P->numChaves/2;
@@ -143,7 +143,8 @@ Pagina* verificaSplit(Pagina* P, int id, int byteOffset, int *chaveMedia, int *b
 		// P agora fica com a primeira metade das chaves, e por consequencia o numero de
 		// chaves cai pela metade
         P->numChaves = mid;
-
+				// Salva P2 no arquivo de indice
+				fwrite(P2, sizeof(Pagina), 1, indice);
         return P2;
     }
     else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
@@ -158,13 +159,13 @@ void inserirId(Pagina* P, int id, int byteOffset, FILE *indice) {
     int byteMedio;
 
 	// Verifica se o split deve ser feito, e o faz em caso afirmativo
-    P2 = verificaSplit(P, id, byteOffset, &chaveMedia, &byteMedio);
+    P2 = verificaSplit(P, id, byteOffset, &chaveMedia, &byteMedio, indice);
 
 	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
 	   deve-se criar uma nova raiz */
     if(P2) {
 
-    	//Alloca memória para novo filho
+    	//Aloca memória para novo filho
         P1 = malloc(sizeof(Pagina));
         assert(P1);
 
@@ -178,6 +179,6 @@ void inserirId(Pagina* P, int id, int byteOffset, FILE *indice) {
         P->byteOffset[0] = byteMedio;
         P->filhos[0] = P1;
         P->filhos[1] = P2;
-			
+
     }
 }

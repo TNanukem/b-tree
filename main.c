@@ -32,7 +32,7 @@ int main (void){
 		// Switch responsável por controlar as opções do menu
 		switch(inputMenu){
 			case 1:
-				criarIndice(&A, dados, log, &indice, &byteOffset);
+				criarIndice(A, dados, log, &indice, &byteOffset);
 				break;
 
 			case 2:
