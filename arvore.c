@@ -202,6 +202,7 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 	// Verifica se o split deve ser feito, e o faz em caso afirmativo
     RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal, log);
 
+
 	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
 	   deve-se criar uma nova raiz */
     if(RRN_P2 != -1) {
@@ -247,8 +248,5 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 			P1 = NULL;
 
     }
-
-    //Salva alteracao no arquivo de log
-    fprintf(log, "Chave <%d> inserida com sucesso\n", id);
 
 }

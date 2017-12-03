@@ -48,6 +48,8 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
+			//Salva alteracao no arquivo de log
+    		fprintf(log, "Chave <%d> inserida com sucesso\n", id);
 			///////
 		}
 
