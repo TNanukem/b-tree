@@ -64,7 +64,7 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	*/
 }
 
-int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal) {
+int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log) {
     int pos,mid, byte, RRN_P2;
 		Pagina *P, *P2;
 
@@ -83,6 +83,8 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 
     if(pos < P->numChaves && P->chaves[pos] == id) {
         /* Se achou a chave na arvore B, nao precisa inserir */
+		//Salva alteracao no arquivo de log
+        fprintf(log, "Chave <%d> duplicada\n", id);
         return -1;
     }
 
@@ -161,6 +163,10 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 		// chaves cai pela metade
         P->numChaves = mid;
 
+
+        		//Salva alteracao no arquivo de log
+				fprintf(log, "Divisao de no - pagina %d\n", RRN_P);
+
 				// Atualiza P no arquivo de indice
 				fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
 				fwrite(P, sizeof(Pagina), 1, indice);
@@ -173,6 +179,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 				(*RRNtotal)++;
 				free(P2);
 				P2 = NULL;
+
         return (*RRNtotal);
     }
     else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
@@ -185,7 +192,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
     }
 }
 
-void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal) {
+void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log) {
     Pagina *P1;
     Pagina *P;
     int chaveMedia, byteMedio;
@@ -240,4 +247,8 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal) {
 			P1 = NULL;
 
     }
+
+    //Salva alteracao no arquivo de log
+    fprintf(log, "Chave <%d> inserida com sucesso\n", id);
+    
 }

@@ -1,0 +1,4 @@
+Execucao de operacao de INSERCAO de <15164>, <Enter Sandman>, <Metallica>.
+Execucao de operacao de INSERCAO de <12367>, <Barubas>, <Durdy>.
+Execucao de operacao de INSERCAO de <8989>, <Chupla>, <Xupla>.
+Execucao da criacao do arquivo de indice <arvore.idx> com base no arquivo dados <dados.dat>.
