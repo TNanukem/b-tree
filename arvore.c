@@ -103,7 +103,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 					 ate chegar em uma pagina folha. Note que mid e byte nesse caso guardam
 					 os valores do id "promovido" (que vai para a pagina pai) e seu byteoffset,
 					 respectivamente */
-        RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal);
+        RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal, log);
 
         /* Se o split foi feito: */
         if(RRN_P2 != -1) {
@@ -200,7 +200,7 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 		int RRN_P2; /* Possivel nova pagina filha a direita */
 
 	// Verifica se o split deve ser feito, e o faz em caso afirmativo
-    RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal);
+    RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal, log);
 
 	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
 	   deve-se criar uma nova raiz */
@@ -250,5 +250,5 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 
     //Salva alteracao no arquivo de log
     fprintf(log, "Chave <%d> inserida com sucesso\n", id);
-    
+
 }

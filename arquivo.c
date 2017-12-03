@@ -45,7 +45,7 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			pos = 0;
 			sscanf(separaCampos(buffer, &pos), "%d", &id);
 
-			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal);
+			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
 			///////
