@@ -135,8 +135,9 @@ char *separaCampos(char *buffer, int *p) {
 }
 
 void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, FILE **indice, int *tamTitulo, int *tamGenero, int *byteOffset, int *RRNtotal, Arvore *A){
-	int i;
+	int i, pos, encontrado = 0;
 	int duplication = 0;
+	char buffer[200];
 	// Parte do código responsável por inserir a música no arquivo de dados
 	Registro *r = malloc(sizeof(Registro)); // Aloca um novo registro
 
@@ -145,39 +146,48 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	strcpy(r->titulo, titulo);
 	strcpy(r->genero, genero);
 
-	// Insere os dados no arquivo de log
-	fprintf(log, "Execucao de operacao de INSERCAO de <%d>, <%s>, <%s>.\n", id, titulo, genero);
-	// Precisa fazer a escrita no arquivo de log para as coisas da B-Tree também.
+	Pagina *P = malloc(sizeof(Pagina));
 
-	// Variáveis para identificar o real tamanho das strings
-	*tamTitulo = strlen(r->titulo);
-	*tamGenero = strlen(r->genero);
+	printf("Encontrado antes do if: %d\n", encontrado);
+	printf("ID do parâmetro = %d\n", id);
+	pesquisarArvore(P, 0, id, &pos, &encontrado, *indice);
+	printf("Encontrado após o if: %d\n", encontrado);
+	if(encontrado){
+		printf("Chave <%d> nao inserida por estar duplicada\n", id);
+		fprintf(log, "Execucao de operacao de INSERCAO de <%d>, <%s>, <%s>.\n", id, titulo, genero);
+		fprintf(log, "Chave <%d> duplicada\n", id);
+	}
+	else{
+		// Insere os dados no arquivo de log
+		fprintf(log, "Execucao de operacao de INSERCAO de <%d>, <%s>, <%s>.\n", id, titulo, genero);
+		// Precisa fazer a escrita no arquivo de log para as coisas da B-Tree também.
 
-	// Aloca no buffer os dados do registro
-	char buffer[200];
-	int size = regVariavel(*r, buffer);
+		// Variáveis para identificar o real tamanho das strings
+		*tamTitulo = strlen(r->titulo);
+		*tamGenero = strlen(r->genero);
 
-	fseek(dados, 0, SEEK_END);
-	*byteOffset = ftell(dados);
+		// Aloca no buffer os dados do registro
+		int size = regVariavel(*r, buffer);
 
-	fseek(*indice, 0, SEEK_END);
-	*RRNtotal = ftell(*indice)/sizeof(Pagina);
+		fseek(dados, 0, SEEK_END);
+		*byteOffset = ftell(dados);
 
-	fwrite(&size, sizeof(size), 1, dados);	// Escreve o tamanho do registro no começo dele
-	fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
+		fseek(*indice, 0, SEEK_END);
+		*RRNtotal = ftell(*indice)/sizeof(Pagina);
 
+		fwrite(&size, sizeof(size), 1, dados);	// Escreve o tamanho do registro no começo dele
+		fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
 
+		// Parte do código responsável por atualizar o índice
+		inserirId(0, id, *byteOffset, *indice, RRNtotal, log, &duplication);
+		*byteOffset += sizeof(size) + size;		
 
-	// Parte do código responsável por atualizar o índice
-	inserirId(0, id, *byteOffset, *indice, RRNtotal, log, &duplication);
-	*byteOffset += sizeof(size) + size;
-
-	//Alterando o Arquivo de log
-	if(duplication == 0) {
 		printf("Registro de id %d inserido na arvore!\n",id);
 		fprintf(log, "Chave <%d> inserida com sucesso\n", id);
 	}
+	
 	free(r);
+	free(P);
 	r = NULL;
 
 }
