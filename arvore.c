@@ -171,28 +171,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 
 			/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
 		   em P2 */
-<<<<<<< HEAD
-      if(!P->folha) {
-        memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
-      }
-			// P agora fica com a primeira metade das chaves, e por consequencia o numero de
-			// chaves cai pela metade
-      P->numChaves = mid;
 
-			// Atualiza P no arquivo de indice
-			fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
-			fwrite(P, sizeof(Pagina), 1, indice);
-			free(P);
-			P = NULL;
-
-			// Salva P2 no final do arquivo de indice
-			fseek(indice, 0, SEEK_END);
-			fwrite(P2, sizeof(Pagina), 1, indice);
-			(*RRNtotal)++;
-			free(P2);
-			P2 = NULL;
-      return (*RRNtotal);
-=======
         if(!P->folha) {
           memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
         }
@@ -218,7 +197,6 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 				P2 = NULL;
 
         return (*RRNtotal);
->>>>>>> a1761dc7143f444ec4d764e22a8eed0666f8b686
     }
     else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
 			// Atualiza P no arquivo de indice

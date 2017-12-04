@@ -42,7 +42,7 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
-			
+
 			//Salva alteracao no arquivo de log
     		fprintf(log, "Chave <%d> inserida com sucesso\n", id);
 			///////
@@ -67,7 +67,7 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			pos = 0;
 			sscanf(separaCampos(buffer, &pos), "%d", &id);
 
-			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal);
+			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
 		}
@@ -159,7 +159,7 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
 
 	// Parte do código responsável por atualizar o índice
-	inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal);
+	inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
 	*byteOffset += sizeof(size) + size;
 	printf("Registro de id %d inserido na arvore!\n",id);
 
