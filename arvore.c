@@ -8,8 +8,13 @@ void criarArvore(Arvore *A, FILE *indice, int *RRNtotal) {
 	}
 	P->numChaves = 0;
 	P->folha = 1;
+	int i;
+	for (i = 0; i < ORDEM+1; i++) {
+		P->filhos[i] = -1;
+	}
 	fwrite(P, sizeof(Pagina), 1, indice);	// Guarda raiz no indice
 	A->raiz = *RRNtotal;
+	A->estaAtualizado = 0;
 	(*RRNtotal)++;
 	free(P);
 	P = NULL;
@@ -62,6 +67,7 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 		return P;					// se estivesse na arvore junto com a posicao *pos correspondente
 	}
 	*/
+	return NULL;
 }
 
 int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log) {
@@ -108,22 +114,22 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
         /* Se o split foi feito: */
         if(RRN_P2 != -1) {
 
-			/* Desloca as chaves para dar lugar a nova chave (id)*/
+					/* Desloca as chaves para dar lugar a nova chave (id)*/
             memmove(&P->chaves[pos+1], &P->chaves[pos], sizeof(*(P->chaves)) * (P->numChaves - pos));
 
-			/* Inclusive o vetor que guarda os filhos tambem deve ser deslocado em um espaco
-			   para a direita, para dar lugar ao filho de id */
+						/* Inclusive o vetor que guarda os filhos tambem deve ser deslocado em um espaco
+			   		para a direita, para dar lugar ao filho de id */
             memmove(&P->filhos[pos+2], &P->filhos[pos+1], sizeof(*(P->filhos)) * (P->numChaves - pos));
 
-			/* Mesmo deslocamento das chaves para os byteOffset*/
+						/* Mesmo deslocamento das chaves para os byteOffset*/
             memmove(&P->byteOffset[pos+1], &P->byteOffset[pos], sizeof(*(P->byteOffset)) * (P->numChaves - pos));
 
-			// Atualiza os valores
+						// Atualiza os valores
             P->chaves[pos] = mid;
             P->byteOffset[pos] = byte;
 
-			/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
-			   vetor filhos (serve apenas para armazenar o overflow) */
+						/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
+		   				vetor filhos (serve apenas para armazenar o overflow) */
           	P->filhos[pos+1] = RRN_P2;
             P->numChaves++;
 
@@ -135,30 +141,58 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 
 	/* Verifica se ira ocorrer um overflow na pagina apos a insercao de um proximo id */
     if(P->numChaves >= ORDEM) {
-        mid = P->numChaves/2;
+      mid = P->numChaves/2;
 
-        *chaveMedia = P->chaves[mid];
-        *byteMedio = P->byteOffset[mid];
+      *chaveMedia = P->chaves[mid];
+      *byteMedio = P->byteOffset[mid];
 
-		// Aloca nova pagina para receber (a segunda) metade das chaves
-		// P2 esta na mesma profundidade que o P chamado
-				P2 = calloc(1, sizeof(Pagina));
-				if (!P2) {
-					printf("Memoria Heap insuficente!\n");
-					return -1;
-				}
-		// A nova pagina vai receber a metade dos dados menos 1 chave (a que vai ser promovida)
-        P2->numChaves = P->numChaves - mid - 1;
-		// Se P for folha, entao P2 tambem sera (mesma profundidade)
-        P2->folha = P->folha;
+			// Aloca nova pagina para receber (a segunda) metade das chaves
+			// P2 esta na mesma profundidade que o P chamado
+			P2 = calloc(1, sizeof(Pagina));
+			if (!P2) {
+				printf("Memoria Heap insuficente!\n");
+				return -1;
+			}
 
-		// Copia a segunda metade de P para P2; P fica com a primeira metade das chaves
-        memmove(P2->chaves, &P->chaves[mid+1], sizeof(*(P->chaves)) * P2->numChaves);
-		// Analogo com os byteOffset de cada chave
-        memmove(P2->byteOffset, &P->byteOffset[mid+1], sizeof(*(P->byteOffset)) * P2->numChaves);
+			// A principio, a nova pagina nao possui filhos
+			int i;
+			for (i = 0; i < ORDEM+1; i++) {
+				P2->filhos[i] = -1;
+			}
+			// A nova pagina vai receber a metade dos dados menos 1 chave (a que vai ser promovida)
+      P2->numChaves = P->numChaves - mid - 1;
+			// Se P for folha, entao P2 tambem sera (mesma profundidade)
+      P2->folha = P->folha;
 
-		/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
+			// Copia a segunda metade de P para P2; P fica com a primeira metade das chaves
+      memmove(P2->chaves, &P->chaves[mid+1], sizeof(*(P->chaves)) * P2->numChaves);
+			// Analogo com os byteOffset de cada chave
+      memmove(P2->byteOffset, &P->byteOffset[mid+1], sizeof(*(P->byteOffset)) * P2->numChaves);
+
+			/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
 		   em P2 */
+<<<<<<< HEAD
+      if(!P->folha) {
+        memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
+      }
+			// P agora fica com a primeira metade das chaves, e por consequencia o numero de
+			// chaves cai pela metade
+      P->numChaves = mid;
+
+			// Atualiza P no arquivo de indice
+			fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+			fwrite(P, sizeof(Pagina), 1, indice);
+			free(P);
+			P = NULL;
+
+			// Salva P2 no final do arquivo de indice
+			fseek(indice, 0, SEEK_END);
+			fwrite(P2, sizeof(Pagina), 1, indice);
+			(*RRNtotal)++;
+			free(P2);
+			P2 = NULL;
+      return (*RRNtotal);
+=======
         if(!P->folha) {
           memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
         }
@@ -184,6 +218,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 				P2 = NULL;
 
         return (*RRNtotal);
+>>>>>>> a1761dc7143f444ec4d764e22a8eed0666f8b686
     }
     else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
 			// Atualiza P no arquivo de indice
@@ -236,6 +271,10 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
       P->byteOffset[0] = byteMedio;
       P->filhos[0] = *RRNtotal;
       P->filhos[1] = RRN_P2;
+			int i;
+			for (i = 2; i < ORDEM+1; i++) {
+				P->filhos[i] = -1;
+			}
 
 			// Atualiza P no arquivo de indice
 			fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);

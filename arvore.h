@@ -21,7 +21,7 @@ typedef struct pagina{
 
 typedef struct{
 	int raiz;
-	
+	int estaAtualizado; // Flag que mostra se a arvore-B (indice) esta atualizada com o arquivo de dados
 } Arvore;
 
 void criarArvore(Arvore *A, FILE *indice, int *RRNtotal);

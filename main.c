@@ -36,6 +36,11 @@ int main (void){
 				break;
 
 			case 2:
+				if (indice == NULL) {
+					// Indice nao foi criado
+					printf("Erro! Arquivo de indice nao criado! Retornando ao menu...\n");
+					break;
+				}
 				printf("\n Insira o ID da musica: ");
 				fscanf(stdin, "%d", &auxID);
 				getchar();
@@ -69,8 +74,7 @@ int main (void){
 
 					break;
 				}
-
-				inserirMusica(auxID, auxTitulo, auxGenero, dados, log, &tamTitulo, &tamGenero);
+				inserirMusica(auxID, auxTitulo, auxGenero, dados, log, &indice, &tamTitulo, &tamGenero, &byteOffset, &RRNtotal, A);
 				break;
 
 			case 3:
@@ -215,6 +219,10 @@ int main (void){
 	if (indice) {
 		fclose(indice);
 		indice = NULL;
+	}
+	if (A) {
+		free(A);
+		A = NULL;
 	}
 
 	return 0;

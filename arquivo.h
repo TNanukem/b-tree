@@ -21,7 +21,7 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 
 /* Função que insere um registro no arquivo de dados */
 
-void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero);
+void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, FILE **indice, int *tamTitulo, int *tamGenero, int *byteOffset, int *RRNtotal, Arvore *A);
 
 /* Função que pesquisa na árvore B o offset do registro cujo id foi passado
    como parâmetro
