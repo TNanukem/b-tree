@@ -157,8 +157,16 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	char buffer[200];
 	int size = regVariavel(*r, buffer);
 
+	fseek(dados, 0, SEEK_END);
+	*byteOffset = ftell(dados);
+
+	fseek(*indice, 0, SEEK_END);
+	*RRNtotal = ftell(*indice)/sizeof(Pagina);
+
 	fwrite(&size, sizeof(size), 1, dados);	// Escreve o tamanho do registro no começo dele
 	fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
+
+
 
 	// Parte do código responsável por atualizar o índice
 	inserirId(0, id, *byteOffset, *indice, RRNtotal, log, &duplication);

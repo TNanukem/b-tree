@@ -42,7 +42,7 @@ int main (void){
 					break;
 				}
 				fclose(indice);
-				indice = fopen("arvore.idx", "a+");
+				indice = fopen("arvore.idx", "r+");
 				if (!indice) {
 					printf("Erro\n");
 					return -1;
