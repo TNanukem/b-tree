@@ -52,7 +52,7 @@ int procurarChave(int numChaves, int *chaves, int id);
 Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado);
 
 //int adicionarArvore(Arvore *A, int id);
-void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal);
+void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log);
 
 
 #endif

@@ -70,7 +70,7 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	return NULL;
 }
 
-int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal) {
+int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log) {
     int pos,mid, byte, RRN_P2;
 		Pagina *P, *P2;
 
@@ -89,6 +89,8 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 
     if(pos < P->numChaves && P->chaves[pos] == id) {
         /* Se achou a chave na arvore B, nao precisa inserir */
+		//Salva alteracao no arquivo de log
+        fprintf(log, "Chave <%d> duplicada\n", id);
         return -1;
     }
 
@@ -107,7 +109,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 					 ate chegar em uma pagina folha. Note que mid e byte nesse caso guardam
 					 os valores do id "promovido" (que vai para a pagina pai) e seu byteoffset,
 					 respectivamente */
-        RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal);
+        RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal, log);
 
         /* Se o split foi feito: */
         if(RRN_P2 != -1) {
@@ -130,6 +132,9 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 		   				vetor filhos (serve apenas para armazenar o overflow) */
           	P->filhos[pos+1] = RRN_P2;
             P->numChaves++;
+
+            //Atualiza o arquivo de log
+            fprintf(log, "Chave <%d> promovida\n", mid);
         }
     }
 
@@ -166,6 +171,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 
 			/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
 		   em P2 */
+<<<<<<< HEAD
       if(!P->folha) {
         memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
       }
@@ -186,6 +192,33 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 			free(P2);
 			P2 = NULL;
       return (*RRNtotal);
+=======
+        if(!P->folha) {
+          memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
+        }
+		// P agora fica com a primeira metade das chaves, e por consequencia o numero de
+		// chaves cai pela metade
+        P->numChaves = mid;
+
+
+        		//Salva alteracao no arquivo de log
+				fprintf(log, "Divisao de no - pagina %d\n", RRN_P);
+
+				// Atualiza P no arquivo de indice
+				fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+				fwrite(P, sizeof(Pagina), 1, indice);
+				free(P);
+				P = NULL;
+
+				// Salva P2 no final do arquivo de indice
+				fseek(indice, 0, SEEK_END);
+				fwrite(P2, sizeof(Pagina), 1, indice);
+				(*RRNtotal)++;
+				free(P2);
+				P2 = NULL;
+
+        return (*RRNtotal);
+>>>>>>> a1761dc7143f444ec4d764e22a8eed0666f8b686
     }
     else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
 			// Atualiza P no arquivo de indice
@@ -197,7 +230,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
     }
 }
 
-void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal) {
+void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log) {
     Pagina *P1;
     Pagina *P;
     int chaveMedia, byteMedio;
@@ -205,7 +238,8 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal) {
 		int RRN_P2; /* Possivel nova pagina filha a direita */
 
 	// Verifica se o split deve ser feito, e o faz em caso afirmativo
-    RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal);
+    RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal, log);
+
 
 	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
 	   deve-se criar uma nova raiz */
@@ -255,5 +289,9 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal) {
 			free(P1);
 			P1 = NULL;
 
+		//Atualiza o arquivo de log
+		fprintf(log, "Chave <%d> promovida\n", chaveMedia);
+
     }
+
 }
