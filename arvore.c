@@ -1,4 +1,5 @@
 #include "arvore.h"
+#include "fila.h"
 
 void criarArvore(Arvore *A, FILE *indice, int *RRNtotal) {
 	Pagina *P = calloc(1, sizeof(Pagina));
@@ -266,4 +267,27 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 
     }
 
+}
+
+void printBTree(Pagina* P, Fila* F, FILE* indice, int *nivel, int *mudarnivel){
+	while(TotalFila(F)){
+		int RRN = SaiFila(F);
+		if(RRN == *mudarnivel){
+			(*nivel)++;
+			*mudarnivel = -1;
+		} 
+		fseek(indice, RRN*sizeof(Pagina), SEEK_SET);
+		fread(P, sizeof(Pagina), 1, indice);
+
+		printf("%d %d ", *nivel, P->numChaves);
+		int i;
+		for(int i = 0; i < P->numChaves; i++){
+			printf("<%d/%d> ", P->chaves[i], P->byteOffset[i]);
+		}
+		for(i = 0; (i <= P->numChaves) && !P->folha; i++)
+			EntraFila(F, P->filhos[i]);
+		if(*mudarnivel == -1)
+			*mudarnivel = P->filhos[0];
+		printf("\n");
+	}
 }

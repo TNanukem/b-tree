@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include "fila.h"
 
 
 typedef struct pagina{
@@ -54,5 +55,6 @@ int pesquisarArvore(Pagina *P, int RRN, int id, int *pos, int *encontrado, FILE*
 //int adicionarArvore(Arvore *A, int id);
 void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log, int *duplication);
 
+void printBTree(Pagina* P, Fila* F, FILE* indice, int *nivel, int *mudarnivel);
 
 #endif
