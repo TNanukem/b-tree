@@ -126,6 +126,9 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 			   vetor filhos (serve apenas para armazenar o overflow) */
           	P->filhos[pos+1] = RRN_P2;
             P->numChaves++;
+
+            //Atualiza o arquivo de log
+            fprintf(log, "Chave <%d> promovida\n", mid);
         }
     }
 
@@ -246,6 +249,9 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 			(*RRNtotal)++;
 			free(P1);
 			P1 = NULL;
+
+		//Atualiza o arquivo de log
+		fprintf(log, "Chave <%d> promovida\n", chaveMedia);
 
     }
 
