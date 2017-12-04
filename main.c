@@ -131,60 +131,48 @@ int main (void){
 				break;
 				*/
 			case 89:
-				printf("Teste de insercao de indice na arvore (RAM)\n");
+				printf("Teste\n");
+				FILE *i = fopen("arvore.idx", "r");
+				Pagina *p = calloc(1, sizeof(Pagina));
+				int folha, numChaves,j, k;
+
+
+
+				if (p) {
+					for (k = 0;k < 10;k++) {
+						fseek(i, k*sizeof(Pagina), SEEK_SET);
+						fread(p, sizeof(Pagina), 1, i);
+						folha = p->folha;
+						numChaves = p->numChaves;
+						printf("RRN: %d\n", k);
+						printf("Folha: %d\n", folha);
+						printf("numChaves: %d\n", numChaves);
+						printf("chaves: ");
+						for (j = 0; j < (p->numChaves); j++) {
+							printf("%d ", p->chaves[j]);
+						}
+						printf("\n");
+						printf("byteOffset: ");
+						for (j = 0; j < p->numChaves; j++) {
+							printf("%d ", p->byteOffset[j]);
+						}
+						printf("\n");
+						printf("RRN dos filhos: ");
+						for (j = 0; j < (p->numChaves)+1; j++) {
+							printf("%d ", p->filhos[j]);
+						}
+						printf("\n");
+					}
+
+
+					fclose(i);
+				} else {
+					printf("Erro\n");
+				}
+
+
+
 				//criarArvore(A);
-				/*
-				inserirId(A->raiz, 3, 7);
-				printf("Pagina de id 3 inserido na arvore!\n");
-				inserirId(A->raiz, 19, 7);
-				printf("Pagina de id 19 inserido na arvore!\n");
-				inserirId(A->raiz, 4, 7);
-				printf("Pagina de id 4 inserido na arvore!\n");
-				inserirId(A->raiz, 20, 7);
-				printf("Pagina de id 20 inserido na arvore!\n");
-				inserirId(A->raiz, 1, 7);
-				printf("Pagina de id 1 inserido na arvore!\n");
-				inserirId(A->raiz, 13, 7);
-				printf("Pagina de id 13 inserido na arvore!\n");
-				inserirId(A->raiz, 16, 7);
-				printf("Pagina de id 16 inserido na arvore!\n");
-				inserirId(A->raiz, 9, 7);
-				printf("Pagina de id 9 inserido na arvore!\n");
-				inserirId(A->raiz, 2, 7);
-				printf("Pagina de id 2 inserido na arvore!\n");
-				inserirId(A->raiz, 23, 7);
-				printf("Pagina de id 23 inserido na arvore!\n");
-				inserirId(A->raiz, 14, 7);
-				printf("Pagina de id 14 inserido na arvore!\n");
-				inserirId(A->raiz, 7, 7);
-				printf("Pagina de id 7 inserido na arvore!\n");
-				inserirId(A->raiz, 21, 7);
-				printf("Pagina de id 21 inserido na arvore!\n");
-				inserirId(A->raiz, 11, 7);
-				printf("Pagina de id 11 inserido na arvore!\n");
-				inserirId(A->raiz, 5, 7);
-				printf("Pagina de id 5 inserido na arvore!\n");
-				inserirId(A->raiz, 8, 7);
-				printf("Pagina de id 8 inserido na arvore!\n");
-				inserirId(A->raiz, 15, 7);
-				printf("Pagina de id 15 inserido na arvore!\n");
-				inserirId(A->raiz, 12, 7);
-				printf("Pagina de id 12 inserido na arvore!\n");
-				inserirId(A->raiz, 10, 7);
-				printf("Pagina de id 10 inserido na arvore!\n");
-				inserirId(A->raiz, 25, 7);
-				printf("Pagina de id 25 inserido na arvore!\n");
-				inserirId(A->raiz, 17, 7);
-				printf("Pagina de id 17 inserido na arvore!\n");
-				inserirId(A->raiz, 26, 7);
-				printf("Pagina de id 26 inserido na arvore!\n");
-				inserirId(A->raiz, 6, 7);
-				printf("Pagina de id 6 inserido na arvore!\n");
-				inserirId(A->raiz, 24, 7);
-				printf("Pagina de id 24 inserido na arvore!\n");
-				inserirId(A->raiz, 22, 7);
-				printf("Pagina de id 22 inserido na arvore!\n");
-				*/
 				/*
 				for (i = 0; i < 50; i++) {
 					inserirId(A->raiz, 50-i, 7);
@@ -195,6 +183,8 @@ int main (void){
 			case 90:
 				outLoop = 1;
 				break;
+			case 99:
+			 	//mostrarArvore(A);
 			default:
 				printf("\n Entrada Invalida!\n");
 				break;

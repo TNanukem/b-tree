@@ -76,4 +76,6 @@ int idConvert(char *idString);
 */
 int exp5(int e, int a);
 
+//int mostraArvore(int RRN_P, FILE *indice);
+
 #endif

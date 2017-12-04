@@ -38,21 +38,14 @@ int procurarChave(int numChaves, int *chaves, int id){
 	return maior;
 }
 
-Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
-	/*
-	// Se a pagina passada for nula, nao ha nada a ser feito
-	if(P == NULL) {
-		*encontrado = 0;
-		return NULL;
-	}
-
-	// Procura dentro da pagina
+int pesquisarArvore(Pagina *P, int RRN, int id, int &pos, int &encontrado, FILE* indice){
+	fseek(indice, RRN*sizeof(P), SEEK_SET+4);
+	fread(P, sizeof(P), 1, indice);
 	*pos = procurarChave(P->numChaves, P->chaves, id);
 
-	// Verifica se a posicao contem o registro procurado
 	if(*pos < P->numChaves && id == P->chaves[*pos]) {
 		*encontrado = 1;
-		return P;
+		return P->byteOffset[*pos];
 	}
 
 	// Se a pagina nao for folha, entao deve-se procurar a esquerda ou a direita do indice
@@ -64,10 +57,8 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	}
 	else {	// Se for folha
 		*encontrado = 0;	// A pagina retornada aqui seria a pagina que o indice ficaria
-		return P;					// se estivesse na arvore junto com a posicao *pos correspondente
+		return 0;					// se estivesse na arvore junto com a posicao *pos correspondente
 	}
-	*/
-	return NULL;
 }
 
 int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log, int *duplication) {
@@ -90,7 +81,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
     if(pos < P->numChaves && P->chaves[pos] == id) {
         /* Se achou a chave na arvore B, nao precisa inserir */
 		//Salva alteracao no arquivo de log
-		*duplication = 1; 
+		*duplication = 1;
         fprintf(log, "Chave <%d> duplicada\n", id);
         return -1;
     }
@@ -195,9 +186,10 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 				fwrite(P2, sizeof(Pagina), 1, indice);
 				(*RRNtotal)++;
 				free(P2);
+
 				P2 = NULL;
 
-        return (*RRNtotal);
+        return (*RRNtotal)-1;
     }
     else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
 			// Atualiza P no arquivo de indice
@@ -219,11 +211,9 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 	// Verifica se o split deve ser feito, e o faz em caso afirmativo
     RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal, log, duplication);
 
-
 	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),
 	   deve-se criar uma nova raiz */
     if(RRN_P2 != -1) {
-
     	//Aloca memória para novo filho
       P1 = malloc(sizeof(Pagina));
 			if (!P1) {

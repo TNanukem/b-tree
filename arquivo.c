@@ -313,3 +313,25 @@ void pesquisaDados(int offset, char *titulo, char *genero, FILE *dados){
 	printf("%d||%d|%s|%s\n", size, id, titulo, genero);
 
 }
+/*
+int mostrarArvore(int RRN_P, FILE *indice) {
+	int i;
+	if (RRN_P >= 0) {
+		// Carrega Pagina de RRN igual a P
+		fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+		P = calloc(1, sizeof(Pagina));
+		if (!P) {
+			printf("Memoria Heap insuficente!\n");
+			return;
+		}
+		fread(P, sizeof(Pagina), 1, indice);
+		for (i = 0; i < ORDEM; i++) {
+			return mostrarArvore(P->filhos[i]);
+		}
+		free(P);
+	} else {
+
+		return -1;
+	}
+
+}*/

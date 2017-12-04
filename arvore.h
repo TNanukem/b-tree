@@ -49,7 +49,7 @@ int procurarChave(int numChaves, int *chaves, int id);
 		- pos: referencia para a posicao da chave dentro da pagina
 		- encontrado: referencia para dizer se a funcao encontrou ou nao um registro com chave igual a id
 */
-Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado);
+int pesquisarArvore(Pagina *P, int RRN, int id, int &pos, int &encontrado, FILE* indice);
 
 //int adicionarArvore(Arvore *A, int id);
 void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log, int *duplication);
