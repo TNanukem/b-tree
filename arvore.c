@@ -70,7 +70,7 @@ Pagina* pesquisarArvore(Pagina *P, int id, int *pos, int *encontrado){
 	return NULL;
 }
 
-int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log) {
+int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log, int *duplication) {
     int pos,mid, byte, RRN_P2;
 		Pagina *P, *P2;
 
@@ -90,6 +90,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
     if(pos < P->numChaves && P->chaves[pos] == id) {
         /* Se achou a chave na arvore B, nao precisa inserir */
 		//Salva alteracao no arquivo de log
+		*duplication = 1; 
         fprintf(log, "Chave <%d> duplicada\n", id);
         return -1;
     }
@@ -109,7 +110,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 					 ate chegar em uma pagina folha. Note que mid e byte nesse caso guardam
 					 os valores do id "promovido" (que vai para a pagina pai) e seu byteoffset,
 					 respectivamente */
-        RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal, log);
+        RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal, log, duplication);
 
         /* Se o split foi feito: */
         if(RRN_P2 != -1) {
@@ -208,7 +209,7 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
     }
 }
 
-void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log) {
+void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log, int *duplication) {
     Pagina *P1;
     Pagina *P;
     int chaveMedia, byteMedio;
@@ -216,7 +217,7 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 		int RRN_P2; /* Possivel nova pagina filha a direita */
 
 	// Verifica se o split deve ser feito, e o faz em caso afirmativo
-    RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal, log);
+    RRN_P2 = verificaSplit(RRN_P, id, byteOffset, &chaveMedia, &byteMedio, indice, RRNtotal, log, duplication);
 
 
 	/* Se split foi feito na raiz (para isso P2 deve ser nao-nulo nessa linha),

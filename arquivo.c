@@ -5,6 +5,7 @@
 void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset, int *RRNtotal){
 
 	int tamTitulo = 0, tamGenero = 0;
+	int duplication = 0;
 	int pos, bufferSize, id = -1;
 	char buffer[200];
 	*byteOffset = 0;
@@ -39,12 +40,13 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			pos = 0;
 			sscanf(separaCampos(buffer, &pos), "%d", &id);
 
-			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
+			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log, &duplication);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
 
 			//Salva alteracao no arquivo de log
-    		fprintf(log, "Chave <%d> inserida com sucesso\n", id);
+			if(duplication==0)
+    			fprintf(log, "Chave <%d> inserida com sucesso\n", id);
 			///////
 		}
 		A->estaAtualizado = 1;
@@ -67,9 +69,11 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			pos = 0;
 			sscanf(separaCampos(buffer, &pos), "%d", &id);
 
-			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
+			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log, &duplication);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
+			if (duplication == 0)
+				fprintf(log, "Chave <%d> inserida com sucesso\n", id);
 		}
 		A->estaAtualizado = 1;
 	}
@@ -135,6 +139,7 @@ char *separaCampos(char *buffer, int *p) {
 
 void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, FILE **indice, int *tamTitulo, int *tamGenero, int *byteOffset, int *RRNtotal, Arvore *A){
 	int i;
+	int duplication = 0;
 	// Parte do código responsável por inserir a música no arquivo de dados
 	Registro *r = malloc(sizeof(Registro)); // Aloca um novo registro
 
@@ -159,9 +164,13 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
 
 	// Parte do código responsável por atualizar o índice
-	inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log);
+	inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log, &duplication);
 	*byteOffset += sizeof(size) + size;
 	printf("Registro de id %d inserido na arvore!\n",id);
+	//Alterando o Arquivo de log
+	if(duplication == 0)
+    	fprintf(log, "Chave <%d> inserida com sucesso\n", id);
+
 
 	free(r);
 	r = NULL;
