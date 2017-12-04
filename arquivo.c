@@ -5,7 +5,10 @@
 void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset, int *RRNtotal){
 
 	int tamTitulo = 0, tamGenero = 0;
-	Registro *registro = NULL;
+	int pos, bufferSize, id = -1;
+	char buffer[200];
+	*byteOffset = 0;
+	*RRNtotal = 0;
 	// Pagina *pagina = calloc(1, sizeof(Pagina));
 
 
@@ -24,20 +27,11 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 		fprintf(log, "Execucao da criacao do arquivo de indice <arvore.idx> com base no arquivo dados <dados.dat>.\n");
 		printf("Execucao da criacao do arquivo de indice <arvore.idx> com base no arquivo dados <dados.dat>.\n");
 
-		int pos, bufferSize, id = -1;
-		char buffer[200];
-		*byteOffset = 0;
-		*RRNtotal = 0;
-		Pagina *raiz;
 		// Cria e guarda arvore em disco
 		criarArvore(A, *indice,RRNtotal);
 
 		fseek(dados, 0, SEEK_SET);
 
-		raiz = calloc(1, sizeof(Pagina));
-		// Acessa a A->raiz a partir do disco (arquivo indice)
-		fseek(*indice, A->raiz*sizeof(Pagina), SEEK_SET);
-		fread(raiz, sizeof(Pagina), 1, *indice);
 		// Leitura de dados.dat
 		while(fread(&bufferSize, sizeof(bufferSize), 1, dados)) {
 
@@ -48,18 +42,37 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal);
 			*byteOffset += bufferSize + sizeof(bufferSize);
 			printf("Registro de id %d inserido na arvore!\n",id);
-			///////
 		}
+		A->estaAtualizado = 1;
 
 	}
 	else { // Se arvore.idx ja existe, verificar se esta atualizado
 
+		if (A->estaAtualizado) {
+			return;
+		}
+		// Se nao estiver atualizado, recriar todo o arquivo de indice
+		fclose(*indice);
+		*indice = fopen("arvore.idx", "w+");
 
+		fseek(dados, 0, SEEK_SET);
+		// Leitura de dados.dat
+		while(fread(&bufferSize, sizeof(bufferSize), 1, dados)) {
+
+			fread(buffer, bufferSize, 1, dados);
+			pos = 0;
+			sscanf(separaCampos(buffer, &pos), "%d", &id);
+
+			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal);
+			*byteOffset += bufferSize + sizeof(bufferSize);
+			printf("Registro de id %d inserido na arvore!\n",id);
+		}
+		A->estaAtualizado = 1;
 	}
 
 
 	// Deixa o ponteiro de dados no inicio do arquivo
-	fseek(dados, 0, SEEK_SET);
+	//fseek(dados, 0, SEEK_SET);
 
 	// Enquanto existirem dados para serem obtidos
 	// fread retorna a quantidade de elementos de tamanho sizeof(Registro) se conseguir obter dados.
@@ -116,7 +129,7 @@ char *separaCampos(char *buffer, int *p) {
 		return &buffer[pos];
 }
 
-void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, int *tamTitulo, int *tamGenero){
+void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, FILE **indice, int *tamTitulo, int *tamGenero, int *byteOffset, int *RRNtotal, Arvore *A){
 	int i;
 	// Parte do código responsável por inserir a música no arquivo de dados
 	Registro *r = malloc(sizeof(Registro)); // Aloca um novo registro
@@ -142,8 +155,12 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
 
 	// Parte do código responsável por atualizar o índice
+	inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal);
+	*byteOffset += sizeof(size) + size;
+	printf("Registro de id %d inserido na arvore!\n",id);
 
 	free(r);
+	r = NULL;
 
 }
 
