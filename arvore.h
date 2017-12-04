@@ -8,6 +8,7 @@
 #include <string.h>
 #include <assert.h>
 #include "fila.h"
+#include <time.h>
 
 
 typedef struct pagina{

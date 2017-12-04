@@ -17,6 +17,11 @@ int main (void){
 	FILE *indice = fopen("arvore.idx", "r");
 	FILE *log = fopen("log_TToledo.txt", "a");
 
+	//Coloca o tempo e a data no arquivo de log
+	time_t tempoAtual;
+	time(&tempoAtual);
+	fprintf(log, "--------------------- %s", ctime(&tempoAtual));
+
 	// Verifica se algum deles nao foi aberto
 	if (!dados || !log) {
 		printf("Memoria Heap insuficente!\n");
