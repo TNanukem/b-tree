@@ -1,6 +1,5 @@
 #include "arquivo.h"
 
-
 // Tem que verificar se o arquivo de índice já existe Miss
 void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffset, int *RRNtotal){
 

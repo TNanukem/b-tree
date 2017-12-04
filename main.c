@@ -1,15 +1,16 @@
 #include "arquivo.h"
 
-
-
 int main (void){
 	int i, byteOffset = 0, RRNtotal = 0;
 	int auxID; char auxTitulo[30], auxGenero[20], auxSize;
 	int inputMenu, outLoop = 0;
-	int tamTitulo, tamGenero;
+	int nivel = 0, mudarnivel = -1;
+	int tamTitulo, tamGenero, pos, encontrado = 0;
 	char buffer[200];
-	Arvore* A;
-	A = (Arvore*) malloc(sizeof(Arvore));
+	Arvore *A = (Arvore*) malloc(sizeof(Arvore));
+	Pagina *P = malloc(sizeof(Pagina));
+	Fila F; 
+	CriaFila(&F);
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
 	FILE *dados = fopen("dados.dat", "a+b");
@@ -24,7 +25,7 @@ int main (void){
 
 
 	while(!outLoop){
-		printf("(1 - Criar Índice) \n(2 - Inserir Música) \n(3 - Pesquisar Música) \n(6 - Sair)\n");
+		printf("(1 - Criar Índice) \n(2 - Inserir Música) \n(3 - Pesquisar Música) \n(5 - Mostrar Árvore) \n(6 - Sair)\n");
 		printf("\nInsira a funcionalidade desejada: ");
 		fscanf(stdin, "%d", &inputMenu);
 
@@ -85,15 +86,29 @@ int main (void){
 				break;
 
 			case 3:
+				printf("\nInsira o ID da musica: ");
+				fscanf(stdin, "%d", &auxID);
+				getchar();
+
+				fprintf(log, "Execucao de operacao de PESQUISA de <%d>.\n", auxID);
+
+				byteOffset = pesquisarArvore(P, 0, auxID, &pos, &encontrado, indice);
+				if(encontrado){
+					pesquisaDados(byteOffset, auxTitulo, auxGenero, dados);
+					fprintf(log, "Chave <%d> encontrada, Offset <%d>, Titulo: <%s>, Genero: <%s>\n", auxID, byteOffset, auxTitulo, auxGenero);
+				}
+				else{
+					fprintf(log, "Chave nao <%d> encontrada\n", auxID);
+					printf("Id nao encontrado!\n");
+				}
+				
 				//pesquisaMusicaID();
 				break;
 
-			case 4:
-				//removeMusicaID();
-				break;
-
 			case 5:
-				//mostraArvoreB();
+				EntraFila((&F), 0);
+				fprintf(log, "Execucao de operacao para mostrar a arvore-B gerada: \n");
+				printBTree(P, &F, indice, &nivel, &mudarnivel, log);
 				break;
 
 			case 6:
