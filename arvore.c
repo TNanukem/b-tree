@@ -39,9 +39,10 @@ int procurarChave(int numChaves, int *chaves, int id){
 }
 
 int pesquisarArvore(Pagina *P, int RRN, int id, int *pos, int *encontrado, FILE* indice){
-	/*
-	fseek(indice, RRN*sizeof(P), SEEK_SET+4);
-	fread(P, sizeof(P), 1, indice);
+	
+	fseek(indice, RRN*sizeof(Pagina), SEEK_SET);
+
+	fread(P, sizeof(Pagina), 1, indice);
 	*pos = procurarChave(P->numChaves, P->chaves, id);
 
 	if(*pos < P->numChaves && id == P->chaves[*pos]) {
@@ -52,15 +53,15 @@ int pesquisarArvore(Pagina *P, int RRN, int id, int *pos, int *encontrado, FILE*
 	// Se a pagina nao for folha, entao deve-se procurar a esquerda ou a direita do indice
 	else if (!P->folha){
 		if (id < P->chaves[*pos]) // Se id for menor, ir para a pagina da esquerda
-			return pesquisarArvore(P->filhos[*pos], id, pos, encontrado);
+			return pesquisarArvore(P, P->filhos[*pos], id, pos, encontrado, indice);
 		else // Caso contrario, ir para a pagina da direita
-			return pesquisarArvore(P->filhos[(*pos)+1], id, pos, encontrado);
+			return pesquisarArvore(P, P->filhos[(*pos)], id, pos, encontrado, indice);
 	}
 	else {	// Se for folha
 		*encontrado = 0;	// A pagina retornada aqui seria a pagina que o indice ficaria
 		return 0;					// se estivesse na arvore junto com a posicao *pos correspondente
 	}
-	*/
+	
 }
 
 int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log, int *duplication) {
