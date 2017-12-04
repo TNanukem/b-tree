@@ -292,7 +292,7 @@ int exp5(int e, int a){
 
 void pesquisaDados(int offset, char *titulo, char *genero, FILE *dados){
 	int size, id, pos;
-	char idAUX[5], buffer[200];
+	char buffer[200];
 
 	fseek(dados, offset, SEEK_SET);
 	fread(&size, sizeof(size), 1, dados);
@@ -300,9 +300,7 @@ void pesquisaDados(int offset, char *titulo, char *genero, FILE *dados){
 	fread(buffer, size, 1, dados);
 
 	pos = 0;
-	sscanf(separaCampos(buffer, &pos), "%s", idAUX);
-
-	id = idConvert(idAUX);
+	sscanf(separaCampos(buffer, &pos), "%d", &id);
 
 	strcpy(titulo, separaCampos(buffer, &pos));
 	strcpy(genero, separaCampos(buffer, &pos));
