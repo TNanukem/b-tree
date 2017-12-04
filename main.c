@@ -13,7 +13,7 @@ int main (void){
 	// Abre o arquivo de dados e o cria se ele não existir
 	// Permite a leitura no arquivo todo e a escrita no fim
 	FILE *dados = fopen("dados.dat", "a+b");
-	FILE *indice = NULL;
+	FILE *indice = fopen("arvore.idx", "r");
 	FILE *log = fopen("log_TToledo.txt", "a");
 
 	// Verifica se algum deles nao foi aberto
@@ -24,7 +24,7 @@ int main (void){
 
 
 	while(!outLoop){
-
+		printf("(1 - Criar Índice) \n(2 - Inserir Música) \n(3 - Pesquisar Música) \n(6 - Sair)\n");
 		printf("\nInsira a funcionalidade desejada: ");
 		fscanf(stdin, "%d", &inputMenu);
 
@@ -41,6 +41,13 @@ int main (void){
 					printf("Erro! Arquivo de indice nao criado! Retornando ao menu...\n");
 					break;
 				}
+				fclose(indice);
+				indice = fopen("arvore.idx", "a+");
+				if (!indice) {
+					printf("Erro\n");
+					return -1;
+				}
+
 				printf("\n Insira o ID da musica: ");
 				fscanf(stdin, "%d", &auxID);
 				getchar();

@@ -14,7 +14,7 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 
 
 	// Verifica se existe arquivo de indice
-	*indice = fopen("arvore.idx", "r");
+	//*indice = fopen("arvore.idx", "r");
 
 
 	if (!*indice) { // Criar um novo arvore.idx caso nao exista
@@ -53,29 +53,26 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 
 	}
 	else { // Se arvore.idx ja existe, verificar se esta atualizado
-
-		if (A->estaAtualizado) {
-			return;
-		}
-		// Se nao estiver atualizado, recriar todo o arquivo de indice
+		printf("arvore.idx ja criado!\n");
 		fclose(*indice);
-		*indice = fopen("arvore.idx", "w+");
+		*indice = fopen("arvore.idx", "a+");
+		return;
+		/*
+		Pagina *p = calloc(1, sizeof(Pagina));
+		int j = 0, k;
 
-		fseek(dados, 0, SEEK_SET);
-		// Leitura de dados.dat
-		while(fread(&bufferSize, sizeof(bufferSize), 1, dados)) {
+		if (p) {
 
-			fread(buffer, bufferSize, 1, dados);
-			pos = 0;
-			sscanf(separaCampos(buffer, &pos), "%d", &id);
+			while (fread(p, sizeof(Pagina), 1, *indice)) {
+				inserirId(j, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log, int *duplication)
+				j++;
+			}
 
-			inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log, &duplication);
-			*byteOffset += bufferSize + sizeof(bufferSize);
-			printf("Registro de id %d inserido na arvore!\n",id);
-			if (duplication == 0)
-				fprintf(log, "Chave <%d> inserida com sucesso\n", id);
+			free(p);
+		} else {
+			printf("Erro\n");
 		}
-		A->estaAtualizado = 1;
+		*/
 	}
 
 
@@ -164,14 +161,14 @@ void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *
 	fwrite(buffer, size, 1, dados);	// Escreve o buffer (os dados formatados do registro)
 
 	// Parte do código responsável por atualizar o índice
-	inserirId(A->raiz, id, *byteOffset, *indice, RRNtotal, log, &duplication);
+	inserirId(0, id, *byteOffset, *indice, RRNtotal, log, &duplication);
 	*byteOffset += sizeof(size) + size;
-	printf("Registro de id %d inserido na arvore!\n",id);
+
 	//Alterando o Arquivo de log
-	if(duplication == 0)
-    	fprintf(log, "Chave <%d> inserida com sucesso\n", id);
-
-
+	if(duplication == 0) {
+		printf("Registro de id %d inserido na arvore!\n",id);
+		fprintf(log, "Chave <%d> inserida com sucesso\n", id);
+	}
 	free(r);
 	r = NULL;
 
