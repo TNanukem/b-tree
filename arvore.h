@@ -31,7 +31,6 @@ void criarArvore(Arvore *A, FILE *indice, int *RRNtotal);
 /* Pesquisa, por meio de busca binária, a posição de uma chave dentro
 	de uma página da B-Tree.
 */
-
 int procurarChave(int numChaves, int *chaves, int id);
 
 /* Funcao que pesquisa recursivamente a arvore-B procurando um registro
@@ -43,8 +42,7 @@ int procurarChave(int numChaves, int *chaves, int id);
 	estar na arvore, alem de deixar a flag *encontrado como 0.
 
 	Resumo:
-	Retorna: Um ponteiro para a pagina onde se encontra (ou deveria estar)
-		o registro procurando
+	Retorna: Retorna o byteOffset do id equivalente
 	Parametros:
 		- *P: Pagina atual da recursao
 		- id: chave procurada
@@ -53,9 +51,27 @@ int procurarChave(int numChaves, int *chaves, int id);
 */
 int pesquisarArvore(Pagina *P, int RRN, int id, int *pos, int *encontrado, FILE* indice);
 
-//int adicionarArvore(Arvore *A, int id);
+/* Funcao que ira inserir um item na arvore
+   Parametros:
+   		RRN_P: RRN usado na recursão, usar a raiz na utilizacao
+   		id: id do item a ser inserido
+   		byteOffset: byteOffset do item a ser inserido
+   		*indice: arquivo que contém a arvore
+   		*RRNtotal: Maior RRN usado para saber o final do arquivo
+   		*log: arquivo de log
+   		*duplication: flag que indica se o item ja estava inserido
+*/
 void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, FILE *log, int *duplication);
 
-void printBTree(Pagina* P, Fila* F, FILE* indice, int *nivel, int *mudarnivel, FILE *log);
+/* Funcao que imprime todas chaves da arvore, conforme criterio do pdf
+   
+   Parametros:
+   		- *P: Ponteiro de pagina allocado para operacoes
+   		- *F: Ponteiro de fila que deve ter um único elemento q representa
+   				a raiz da arvore (seu rrn)
+   		- *indice: arquivo no qual a arvore esta salva
+   		- *log: arquivo de log
+*/
+void printBTree(Pagina* P, Fila* F, FILE* indice, FILE *log);
 
 #endif
