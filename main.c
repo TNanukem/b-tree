@@ -1,12 +1,18 @@
+// Algoritmos e Estruturas de Dados 2
+// Implementação de uma árvore B
+// 
+// Guilherme Lima Blatt		9771470
+// Lucas Akira Morishita	9771320
+// Thiago Músico			9771567
+// Tiago Toledo Junior		9771309
+
 #include "arquivo.h"
 
 int main (void){
-	int i, byteOffset = 0, RRNtotal = 0;
-	int auxID; char auxTitulo[30], auxGenero[20], auxSize;
+	int byteOffset = 0, RRNtotal = 0;
+	int auxID; char auxTitulo[30], auxGenero[20];
 	int inputMenu, outLoop = 0;
-	int nivel = 0, mudarnivel = -1;
-	int tamTitulo, tamGenero, pos, encontrado = 0;
-	char buffer[200];
+	int pos, encontrado = 0;
 	Arvore *A = (Arvore*) malloc(sizeof(Arvore));
 	Pagina *P = malloc(sizeof(Pagina));
 	Fila F; 
@@ -30,7 +36,8 @@ int main (void){
 
 
 	while(!outLoop){
-		printf("(1 - Criar Índice) \n(2 - Inserir Música) \n(3 - Pesquisar Música) \n(5 - Mostrar Árvore) \n(6 - Sair)\n");
+		printf("\n(1 - Criar Índice) \n(2 - Inserir Música) \n(3 - Pesquisar Música) \n(5 - Mostrar Árvore) \n(6 - Sair e Salvar)\n");
+		printf("Observacao: E necessario sair do programa (funcionalidade 6) para atualizar o arquivo de log\n");
 		printf("\nInsira a funcionalidade desejada: ");
 		fscanf(stdin, "%d", &inputMenu);
 
@@ -64,7 +71,7 @@ int main (void){
 
 				// Verificando a validade dos caracteres do título
 				if(!caractereValido(auxTitulo)){
-					printf("Titulo Invalido! Caraceteres especiais nao sao aceitos\n");
+					printf("\nTitulo Invalido! Caraceteres especiais nao sao aceitos\n\n");
 
 					// Dá um reset nos inputs em caso de entrada inválida
 					auxID = -1;
@@ -79,7 +86,7 @@ int main (void){
 
 				// Verificando a validade dos caraceteres do gênero
 				if(!caractereValido(auxGenero)){
-					printf("Genero Invalido! Caraceteres especiais nao sao aceitos\n");
+					printf("\nGenero Invalido! Caraceteres especiais nao sao aceitos\n\n");
 
 					// Dá um reset nos inputs em caso de entrada inválida
 					auxID = -1;
@@ -87,7 +94,7 @@ int main (void){
 
 					break;
 				}
-				inserirMusica(auxID, auxTitulo, auxGenero, dados, log, &indice, &tamTitulo, &tamGenero, &byteOffset, &RRNtotal, A);
+				inserirMusica(auxID, auxTitulo, auxGenero, dados, log, &indice, &byteOffset, &RRNtotal, A);
 				break;
 
 			case 3:
@@ -104,114 +111,21 @@ int main (void){
 				}
 				else{
 					fprintf(log, "Chave nao <%d> encontrada\n", auxID);
-					printf("Id nao encontrado!\n");
+					printf("\nNao existe chave com id <%d>\n", auxID);
 				}
 				
-				//pesquisaMusicaID();
 				break;
 
 			case 5:
 				EntraFila((&F), 0);
 				fprintf(log, "Execucao de operacao para mostrar a arvore-B gerada: \n");
-				printBTree(P, &F, indice, &nivel, &mudarnivel, log);
+				printBTree(P, &F, indice, log);
 				break;
 
 			case 6:
 				outLoop = 1;
-				int pos, auxsize;
-				char IDzin[5]; auxID = -1;
-
-				// Testando a leitura do arquivo
-
-
-
-				fseek(dados, 0, SEEK_SET);
-				while(fread(&auxsize, sizeof(auxsize), 1, dados)){
-
-					fread(buffer, auxsize, 1, dados);
-					pos = 0;
-
-					sscanf(separaCampos(buffer, &pos), "%d", &auxID);
-					/*
-					//auxID = (int) *(separaCampos(buffer, &pos));
-					sscanf(separaCampos(buffer, &pos), "%s", IDzin);
-					auxID = idConvert(IDzin);
-					*/
-					//memmove(&auxID, buffer, sizeof(auxID));
-					//pos = sizeof(auxID);
-					strcpy(auxTitulo, separaCampos(buffer, &pos));
-					strcpy(auxGenero, separaCampos(buffer, &pos));
-
-					printf("%d||%d|%s|%s|\n", auxsize, auxID, auxTitulo, auxGenero);
-				}
-				/*
-				printf("PESQUISA: \n");
-				pesquisaDados(67, auxTitulo, auxGenero, dados);
-				*/
 				break;
-			case 88:
-				/*
-				printf("Noia\n");
-				criarArvore(A, NULL);
-				for(i = 0; i < 100; i++)
-					inserirId(A->raiz, 100-i, 2*i, NULL);
-				break;
-				*/
-			case 89:
-				printf("Teste\n");
-				FILE *i = fopen("arvore.idx", "r");
-				Pagina *p = calloc(1, sizeof(Pagina));
-				int folha, numChaves,j, k;
 
-
-
-				if (p) {
-					for (k = 0;k < 10;k++) {
-						fseek(i, k*sizeof(Pagina), SEEK_SET);
-						fread(p, sizeof(Pagina), 1, i);
-						folha = p->folha;
-						numChaves = p->numChaves;
-						printf("RRN: %d\n", k);
-						printf("Folha: %d\n", folha);
-						printf("numChaves: %d\n", numChaves);
-						printf("chaves: ");
-						for (j = 0; j < (p->numChaves); j++) {
-							printf("%d ", p->chaves[j]);
-						}
-						printf("\n");
-						printf("byteOffset: ");
-						for (j = 0; j < p->numChaves; j++) {
-							printf("%d ", p->byteOffset[j]);
-						}
-						printf("\n");
-						printf("RRN dos filhos: ");
-						for (j = 0; j < (p->numChaves)+1; j++) {
-							printf("%d ", p->filhos[j]);
-						}
-						printf("\n");
-					}
-
-
-					fclose(i);
-				} else {
-					printf("Erro\n");
-				}
-
-
-
-				//criarArvore(A);
-				/*
-				for (i = 0; i < 50; i++) {
-					inserirId(A->raiz, 50-i, 7);
-					printf("Pagina de id %d inserido na arvore!\n",50-i);
-				}
-				*/
-				break;
-			case 90:
-				outLoop = 1;
-				break;
-			case 99:
-			 	//mostrarArvore(A);
 			default:
 				printf("\n Entrada Invalida!\n");
 				break;

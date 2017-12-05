@@ -21,15 +21,12 @@ void criarIndice(Arvore *A, FILE *dados, FILE *log, FILE **indice, int *byteOffs
 
 /* Função que insere um registro no arquivo de dados */
 
-void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, FILE **indice, int *tamTitulo, int *tamGenero, int *byteOffset, int *RRNtotal, Arvore *A);
+void inserirMusica(int id, char titulo[30], char genero[20], FILE *dados, FILE *log, FILE **indice, int *byteOffset, int *RRNtotal, Arvore *A);
 
 /* Função que pesquisa na árvore B o offset do registro cujo id foi passado
    como parâmetro
 */
 
-int pesquisaMusicaID(int id, FILE *log, Arvore *A, FILE *dados);
-
-/* Função que realiza a remoção de um registro baseado no id fornecido */
 
 void removeMusicaID(int id, FILE *log);
 
@@ -69,13 +66,5 @@ void pesquisaDados(int offset, char *titulo, char *genero, FILE *Dados);
    um inteiro.
   */
 
-int idConvert(char *idString);
-
-/* Função auxiliar cujo único propósito é realizar a operação de potência
-   sem a necessidade de usar a math.h
-*/
-int exp5(int e, int a);
-
-//int mostraArvore(int RRN_P, FILE *indice);
 
 #endif
