@@ -66,19 +66,19 @@ int pesquisarArvore(Pagina *P, int RRN, int id, int *pos, int *encontrado, FILE*
 
 int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteMedio, FILE *indice, int *RRNtotal, FILE *log, int *duplication) {
     int pos,mid, byte, RRN_P2;
-		Pagina *P, *P2;
+	Pagina *P, *P2;
 
-		// Carrega Pagina de RRN igual a P
-		fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
-		P = calloc(1, sizeof(Pagina));
-		if (!P) {
-			printf("Memoria Heap insuficente!\n");
-			return -1;
-		}
-		fread(P, sizeof(Pagina), 1, indice);
+	// Carrega Pagina de RRN igual a P
+	fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+	P = calloc(1, sizeof(Pagina));
+	if (!P) {
+		printf("Memoria Heap insuficente!\n");
+		return -1;
+	}
+	fread(P, sizeof(Pagina), 1, indice);
 
-		/* Retorna a posicao de id, se encontrado na pagina, ou a posicao que id
-		   deveria ficar caso nao encontrado */
+	/* Retorna a posicao de id, se encontrado na pagina, ou a posicao que id
+	   deveria ficar caso nao encontrado */
     pos = procurarChave(P->numChaves, P->chaves, id);
 
     if(pos < P->numChaves && P->chaves[pos] == id) {
@@ -98,33 +98,34 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
         P->byteOffset[pos] = byteOffset;
         P->numChaves++;
 
-    } else {
+    } 
+    else {
 
-				/* Se nao for folha, chamar verificaSplit na pagina filha recursivamente
-					 ate chegar em uma pagina folha. Note que mid e byte nesse caso guardam
-					 os valores do id "promovido" (que vai para a pagina pai) e seu byteoffset,
-					 respectivamente */
+		/* Se nao for folha, chamar verificaSplit na pagina filha recursivamente
+			 ate chegar em uma pagina folha. Note que mid e byte nesse caso guardam
+			 os valores do id "promovido" (que vai para a pagina pai) e seu byteoffset,
+			 respectivamente */
         RRN_P2 = verificaSplit(P->filhos[pos], id, byteOffset, &mid, &byte, indice, RRNtotal, log, duplication);
 
         /* Se o split foi feito: */
         if(RRN_P2 != -1) {
 
-					/* Desloca as chaves para dar lugar a nova chave (id)*/
+			/* Desloca as chaves para dar lugar a nova chave (id)*/
             memmove(&P->chaves[pos+1], &P->chaves[pos], sizeof(*(P->chaves)) * (P->numChaves - pos));
 
-						/* Inclusive o vetor que guarda os filhos tambem deve ser deslocado em um espaco
+			/* Inclusive o vetor que guarda os filhos tambem deve ser deslocado em um espaco
 			   		para a direita, para dar lugar ao filho de id */
             memmove(&P->filhos[pos+2], &P->filhos[pos+1], sizeof(*(P->filhos)) * (P->numChaves - pos));
 
-						/* Mesmo deslocamento das chaves para os byteOffset*/
+			/* Mesmo deslocamento das chaves para os byteOffset*/
             memmove(&P->byteOffset[pos+1], &P->byteOffset[pos], sizeof(*(P->byteOffset)) * (P->numChaves - pos));
 
-						// Atualiza os valores
+			// Atualiza os valores
             P->chaves[pos] = mid;
             P->byteOffset[pos] = byte;
 
-						/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
-		   				vetor filhos (serve apenas para armazenar o overflow) */
+			/* Se pos+1 == ORDEM da arvore-b, o indice [pos+1] existe no
+		   	vetor filhos (serve apenas para armazenar o overflow) */
           	P->filhos[pos+1] = RRN_P2;
             P->numChaves++;
 
@@ -135,72 +136,74 @@ int verificaSplit(int RRN_P, int id, int byteOffset, int *chaveMedia, int *byteM
 
 
 	/* Verifica se ira ocorrer um overflow na pagina apos a insercao de um proximo id */
-    if(P->numChaves >= ORDEM) {
-      mid = P->numChaves/2;
+	if(P->numChaves >= ORDEM) {
+		mid = P->numChaves/2;
 
-      *chaveMedia = P->chaves[mid];
-      *byteMedio = P->byteOffset[mid];
+		*chaveMedia = P->chaves[mid];
+		*byteMedio = P->byteOffset[mid];
 
-			// Aloca nova pagina para receber (a segunda) metade das chaves
-			// P2 esta na mesma profundidade que o P chamado
-			P2 = calloc(1, sizeof(Pagina));
-			if (!P2) {
-				printf("Memoria Heap insuficente!\n");
-				return -1;
-			}
+		// Aloca nova pagina para receber (a segunda) metade das chaves
+		// P2 esta na mesma profundidade que o P chamado
+		P2 = calloc(1, sizeof(Pagina));
+		if (!P2) {
+			printf("Memoria Heap insuficente!\n");
+			return -1;
+		}
 
-			// A principio, a nova pagina nao possui filhos
-			int i;
-			for (i = 0; i < ORDEM+1; i++) {
-				P2->filhos[i] = -1;
-			}
-			// A nova pagina vai receber a metade dos dados menos 1 chave (a que vai ser promovida)
-      P2->numChaves = P->numChaves - mid - 1;
-			// Se P for folha, entao P2 tambem sera (mesma profundidade)
-      P2->folha = P->folha;
+		// A principio, a nova pagina nao possui filhos
+		int i;
+		for (i = 0; i < ORDEM+1; i++) {
+			P2->filhos[i] = -1;
+		}
+			
+		// A nova pagina vai receber a metade dos dados menos 1 chave (a que vai ser promovida)
+		P2->numChaves = P->numChaves - mid - 1;
+		// Se P for folha, entao P2 tambem sera (mesma profundidade)
+		P2->folha = P->folha;
 
-			// Copia a segunda metade de P para P2; P fica com a primeira metade das chaves
-      memmove(P2->chaves, &P->chaves[mid+1], sizeof(*(P->chaves)) * P2->numChaves);
-			// Analogo com os byteOffset de cada chave
-      memmove(P2->byteOffset, &P->byteOffset[mid+1], sizeof(*(P->byteOffset)) * P2->numChaves);
+		// Copia a segunda metade de P para P2; P fica com a primeira metade das chaves
+	    memmove(P2->chaves, &P->chaves[mid+1], sizeof(*(P->chaves)) * P2->numChaves);
+		// Analogo com os byteOffset de cada chave
+	    memmove(P2->byteOffset, &P->byteOffset[mid+1], sizeof(*(P->byteOffset)) * P2->numChaves);
 
-			/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
-		   em P2 */
+		/* Os filhos das chaves as quais foram para P2 tambem devem ser colocados
+	    em P2 */
 
-        if(!P->folha) {
-          memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
-        }
+	    if(!P->folha) {
+	    	memmove(P2->filhos, &P->filhos[mid+1], sizeof(*(P->filhos)) * (P2->numChaves + 1));
+	    }
 		// P agora fica com a primeira metade das chaves, e por consequencia o numero de
 		// chaves cai pela metade
-        P->numChaves = mid;
+	    P->numChaves = mid;
 
 
-        		//Salva alteracao no arquivo de log
-				fprintf(log, "Divisao de no - pagina %d\n", RRN_P);
+		//Salva alteracao no arquivo de log
+		fprintf(log, "Divisao de no - pagina %d\n", RRN_P);
 
-				// Atualiza P no arquivo de indice
-				fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
-				fwrite(P, sizeof(Pagina), 1, indice);
-				free(P);
-				P = NULL;
+		// Atualiza P no arquivo de indice
+		fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+		fwrite(P, sizeof(Pagina), 1, indice);
+		free(P);
+		P = NULL;
 
-				// Salva P2 no final do arquivo de indice
-				fseek(indice, 0, SEEK_END);
-				fwrite(P2, sizeof(Pagina), 1, indice);
-				(*RRNtotal)++;
-				free(P2);
+		// Salva P2 no final do arquivo de indice
+		fseek(indice, 0, SEEK_END);
+		fwrite(P2, sizeof(Pagina), 1, indice);
+		(*RRNtotal)++;
+		free(P2);
 
-				P2 = NULL;
+		P2 = NULL;
 
-        return (*RRNtotal)-1;
+	    return (*RRNtotal)-1;
     }
-    else { // Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
-			// Atualiza P no arquivo de indice
-			fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
-			fwrite(P, sizeof(Pagina), 1, indice);
-			free(P);
-			P = NULL;
-      return -1;
+    else { 
+    	// Se nao ocorrer overflow na proxima insercao, retornar nulo (nao sera necessario criar nova pagina)
+		// Atualiza P no arquivo de indice
+		fseek(indice, RRN_P*sizeof(Pagina), SEEK_SET);
+		fwrite(P, sizeof(Pagina), 1, indice);
+		free(P);
+		P = NULL;
+      	return -1;
     }
 }
 
@@ -268,25 +271,26 @@ void inserirId(int RRN_P, int id, int byteOffset, FILE *indice, int *RRNtotal, F
 
 }
 
-void printBTree(Pagina* P, Fila* F, FILE* indice, int *nivel, int *mudarnivel, FILE *log){
+void printBTree(Pagina* P, Fila* F, FILE* indice, FILE *log){
+	int mudarnivel = -1, nivel = 0;
 	while(TotalFila(F)){
 		int RRN = SaiFila(F);
-		if(RRN == *mudarnivel){
-			(*nivel)++;
-			*mudarnivel = -1;
+		if(RRN == mudarnivel){
+			nivel++;
+			mudarnivel = -1;
 		} 
 		fseek(indice, RRN*sizeof(Pagina), SEEK_SET);
 		fread(P, sizeof(Pagina), 1, indice);
 
-		fprintf(log, "%d %d ", *nivel, P->numChaves);
+		fprintf(log, "%d %d ", nivel, P->numChaves);
 		int i;
 		for(int i = 0; i < P->numChaves; i++){
 			fprintf(log, "<%d/%d> ", P->chaves[i], P->byteOffset[i]);
 		}
 		for(i = 0; (i <= P->numChaves) && !P->folha; i++)
 			EntraFila(F, P->filhos[i]);
-		if(*mudarnivel == -1)
-			*mudarnivel = P->filhos[0];
+		if(mudarnivel == -1)
+			mudarnivel = P->filhos[0];
 		fprintf(log, "\n");
 	}
 }
