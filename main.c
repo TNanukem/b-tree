@@ -3,7 +3,7 @@
 // 
 // Guilherme Lima Blatt		9771470
 // Lucas Akira Morishita	9771320
-// Thiago Músico			9771567
+// Thiago Músico			    9771567
 // Tiago Toledo Junior		9771309
 
 #include "arquivo.h"
