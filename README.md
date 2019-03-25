@@ -1,17 +1,75 @@
 # B-Tree
 
-Universidade de São Paulo - São Carlos
+University of São Paulo - São Carlos
 
-2º Semestre de 2017
+2nd Semester of 2017
 
-SCC603 - Algoritmos e Estruturas de Dados II - Profª Elaine Parros M. de Sousa
+Project made for the course "SCC603 - Algorithms and Data Structures II", ministered by Professor Elaine Parros M. de Sousa.
 
-Trabalho 2 - Árvore-B
+This project was originally made by:
 
-## Objetivo do Trabalho
+* Guilherme Blatt (https://github.com/guilherme-blatt)
+* Lucas Akira Morishita (https://github.com/lucas-akira)
+* Thiago Músico (https://github.com/ThiagoMusico)
+* Tiago Toledo Junior (https://github.com/TNanukem)
 
-Aplicar os conceitos estudados na disciplina de Algoritmos e Estrutura de Dados II para implementação de soluções para problemas práticos.
+## Brief description and objective
 
-## Descrição do problema
+Abstract data type implementation of an order 5 B-tree (generalization of a binary search tree), along with data indexing, creation, insertion and search. 
 
-O projeto consiste em implementar um TAD para Árvore-B de ordem 5, com a função de indexação de dados, e as operações de criação, inserção e busca. A árvore-B deve ser mantida em memória secundária (em disco).
+The goal was to apply the concepts studied during the classes into a practical environment. The 'Complete description' section contains the English translation of the original PDF file (Trabalho2_BTree.pdf) describing of the project to be made (in Portuguese) with all the requirements imposed by the professor.
+
+## (some) Project features
+* Made in C
+* B-Tree stored in secondary memory (in disk)
+* No global variables
+* No external libraries, apart from the C standard ones (like stdio, stdlib, etc.)
+* Creates a log file with each action done (insertion, creation, etc.),
+
+## Running
+```
+gcc arquivo.c arvore.c fila.c main.c -o b-tree
+./b-tree
+```
+
+## Complete description (WIP)
+
+University of São Paulo 
+
+Institute of Mathematics and Computer Science
+
+Computer Sciences Department
+
+### Project 2 - B-Tree
+
+**1. Project Objective:**
+
+Apply the concepts studied in the course Algorithms and Data Structures II to implement solutions to practical problems. 
+
+On this project, the student must develop a program in C or C++ to resolve the problem specified in **section 4** using graphs and data structure concepts.
+
+The program must be compiled in **Code::Blocks 16.01**. (*sic*) 
+
+(*Note: this project was compiled using gcc*)
+
+**2. Avaliation Criteria**
+
+The program should be developed in groups of 3 or 4 students and must follow strictly the defined input and output formats. Any copied programs (partially or totally) will obtain **grade zero**, no matter which one is the original or the copy. Programs developed in another programming language (other than C/C++) will not be accepted.
+
+* The project grade will be from 0 to 10 (inclusive)
+* The maximum grade is obtained if the evaluated project follows all requirements, and is well organized and presented
+* For each non-fulfilled requirement the grade will be decreased by one until its minimum limit
+* Grade ZERO will be obtained when one (or more) of these itens occurs:
+  * the project is not delivered until the maximum allowed date;
+  * the project has many errors;
+  * the code fails compilation;
+  * complete or partial code copy is detected;
+  * a report is not delivered according to specification;
+  * the B-tree is not implemented in disk;
+  * insertion and/or search operations are made without the use of the B-tree.
+  
+The avaliation itens are:
+1. (50%) The program works correctly in the described tasks for all test cases and process input/output correctly;
+2. (20%) Quality of the developed solution, functional code modularization, good usage of programming techniques and efficiency in terms of space and time;
+3. (10%) Good identation and comment usage in code, along with good code structure;
+4. (20%) External documentation: Short report (in .pdf format) explaining each taken decision to implement the solution, being necessary the inclusion of details about (at least) the index archive structure, used data structures, implementation strategies of the B-tree creation, search, insertion and removal, and time/space complexity estimations. Include figures to illustrate file organization and support structures (similar to the figures shown in class). 
