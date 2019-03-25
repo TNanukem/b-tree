@@ -17,7 +17,7 @@ This project was originally made by:
 
 Abstract data type implementation of an order 5 B-tree (generalization of a binary search tree), along with data indexing, creation, insertion and search. 
 
-The goal was to apply the concepts studied during the classes into a practical environment. The 'Complete description' section contains the English translation of the original PDF file (Trabalho2_BTree.pdf) describing of the project to be made (in Portuguese) with all the requirements imposed by the professor.
+The goal was to apply the concepts studied during the classes into a practical environment. The 'Complete description' section contains the English translation of the original PDF file (Trabalho2_BTree.pdf) describing the project to be made (in Portuguese) with all the requirements imposed by the professor.
 
 ## (some) Project features
 * Made in C
